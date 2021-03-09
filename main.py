@@ -1,36 +1,50 @@
 import cv2
-import sknw
-import networkx as nx
+import skan
 import matplotlib.pyplot as plt
 import numpy as np
+from typing import Tuple
+import numba
 
 image = cv2.imread('maze.png')
 
 retVal, thresh = cv2.threshold(cv2.cvtColor(image, cv2.COLOR_RGB2GRAY), 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
 
-thinned = cv2.ximgproc.thinning(thresh)
+thinned = np.array(cv2.ximgproc.thinning(thresh))//255
 
-graph = sknw.build_sknw(thinned, multi=False)
 
-G = nx.Graph(graph)
-plt.imshow(image, cmap='gray')
 
-# Draw Edges by 'pts'
-for (s, e) in graph.edges():
-    ps = graph[s][e]['pts']
-    plt.plot(ps[:, 1], ps[:, 0], 'red')
+class MatrixGraph:
 
-# Draw Node by 'o'
-node, nodes = graph.node, graph.nodes()
-ps = np.array([node[i]['o'] for i in nodes])
-plt.plot(ps[:, 1], ps[:, 0], 'g.')
-plt.title('Skeletonize')
-plt.savefig('Overlay_Maze.jpg')
-plt.show()
+    graph: np.ndarray
+    rows: int
+    cols: int
 
-G = nx.path_graph(len(ps))
-G = nx.karate_club_graph()
-pos = nx.spring_layout(G)
-nx.draw(G, pos, node_color='b')
+    def __init__(self, matrix: np.ndarray) -> None:
+        self.graph = matrix
+        self.rows, self.cols = matrix.shape
 
-cv2.waitKey(0)
+    # @numba.jit(nopython=True) use if performance is an issue. requires restructure
+    def get_valid_neighbours(self, row: int, col: int) -> list[Tuple]:
+        """Not elegant but fast"""
+        neighbours = []
+
+        if row - 1 >= 0 and self.graph[row - 1, col] == 1:
+            neighbours.append((row - 1, col))
+        if row + 1 < self.rows and self.graph[row + 1, col] == 1:
+            neighbours.append((row + 1, col))
+        if col - 1 >= 0 and self.graph[row, col - 1] == 1:
+            neighbours.append((row, col - 1))
+        if col + 1 < self.cols and self.graph[row, col + 1] == 1:
+            neighbours.append((row, col + 1))
+        if row - 1 >= 0 and col - 1 >= 0 and self.graph[row - 1, col - 1] == 1:
+            neighbours.append((row - 1, col - 1))
+        if row - 1 >= 0 and col + 1 < self.cols and self.graph[row - 1, col + 1] == 1:
+            neighbours.append((row - 1, col + 1))
+        if row + 1 < self.rows and col - 1 >= 0 and self.graph[row + 1, col - 1] == 1:
+            neighbours.append((row + 1, col - 1))
+        if row + 1 < self.rows and col + 1 < self.cols and self.graph[row + 1, col + 1] == 1:
+            neighbours.append((row + 1, col + 1))
+        return neighbours
+
+
+graph = MatrixGraph(thinned)
