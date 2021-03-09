@@ -5,15 +5,19 @@ import numpy as np
 from typing import Tuple
 import numba
 
-image = cv2.imread('maze.png')
+image = cv2.imread('maze2.jpg')
 
 retVal, thresh = cv2.threshold(cv2.cvtColor(image, cv2.COLOR_RGB2GRAY), 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
 
 thinned = np.array(cv2.ximgproc.thinning(thresh))//255
 
 
+spec = [('graph', numba.uint8[:, :]),
+        ('rows', numba.uint8),
+        ('cols', numba.uint8)]
 
-class MatrixGraph:
+@numba.jitclass(spec) # vroom vroom. try timeit and see difference
+class MatrixGraph(object):
 
     graph: np.ndarray
     rows: int
@@ -23,7 +27,6 @@ class MatrixGraph:
         self.graph = matrix
         self.rows, self.cols = matrix.shape
 
-    # @numba.jit(nopython=True) use if performance is an issue. requires restructure
     def get_valid_neighbours(self, row: int, col: int) -> list[Tuple]:
         """Not elegant but fast"""
         neighbours = []
@@ -48,3 +51,7 @@ class MatrixGraph:
 
 
 graph = MatrixGraph(thinned)
+
+# cv2.imshow('w', thinned)
+#
+# cv2.waitKey(0)
