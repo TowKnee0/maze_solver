@@ -8,16 +8,22 @@ import pygame
 
 pygame.init()
 
-image = cv2.imread('maze3.jpg')
+image = cv2.imread('maze2.jpg')
+
+
 
 retVal, thresh = cv2.threshold(cv2.cvtColor(image, cv2.COLOR_RGB2GRAY), 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
 
 thinned = np.array(cv2.ximgproc.thinning(thresh))//255
 
+cv2.imshow('t', thinned * 255)
+
 # cut borders
 
 temp = np.delete(thinned, [0, thinned.shape[1] - 1], axis=1)
 temp = np.delete(thinned, [0, thinned.shape[0] - 1], axis=0)
+
+
 
 # This along with the decorator complies each method into machine code the first
 # time its called. Then each subsequent call runs from machine code meaning
@@ -105,7 +111,6 @@ class PathfindingAlgorithms:
         while queue != []:
 
             curr = queue.pop(0)
-            print(curr)
 
             surface.set_at(curr, (255, 0, 0))
             display.blit(surf, (0, 0))
@@ -122,17 +127,21 @@ class PathfindingAlgorithms:
 
 
 
-graph1 = MatrixGraph(temp)
+graph1 = MatrixGraph(np.swapaxes(temp, 0, 1))
+
+# cv2.imshow('t', temp * 255)
+# cv2.waitKey(0)
 
 pygame.init()
 display = pygame.display.set_mode((1000, 1000))
 
+# surf = pygame.surfarray.make_surface(np.swapaxes(graph1.graph, 0, 1) * 255)
 surf = pygame.surfarray.make_surface(graph1.graph * 255)
-#
+
 display.blit(surf, (0, 0))
 alg = PathfindingAlgorithms()
 # alg.depth_first_search(graph1, (387, 611), (1, 432), [], surf) # this needs to be implemented iteratively
-alg.breadth_first_search(graph1, (407, 611), (393, 432), set(), surf)
+alg.breadth_first_search(graph1, (537, 315), (393, 432), set(), surf)
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
