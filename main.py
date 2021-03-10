@@ -8,7 +8,7 @@ import pygame
 
 pygame.init()
 
-image = cv2.imread('maze.png')
+image = cv2.imread('maze3.jpg')
 
 retVal, thresh = cv2.threshold(cv2.cvtColor(image, cv2.COLOR_RGB2GRAY), 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
 
@@ -53,28 +53,28 @@ class MatrixGraph(object):
         self.graph = matrix
         self.cols, self.rows = matrix.shape
 
-    def get_valid_neighbours(self, row: int, col: int) -> list[Tuple]:
+    def get_valid_neighbours(self, col, row) -> list[Tuple]:
         """Not elegant but fast(enough for now)"""
         neighbours = []
         # col = cord[0]
         # row = cord[1]
 
-        if row - 1 >= 0 and self.graph[row - 1, col] == 1:
-            neighbours.append((row - 1, col))
-        if row + 1 < self.rows and self.graph[row + 1, col] == 1:
-            neighbours.append((row + 1, col))
-        if col - 1 >= 0 and self.graph[row, col - 1] == 1:
-            neighbours.append((row, col - 1))
-        if col + 1 < self.cols and self.graph[row, col + 1] == 1:
-            neighbours.append((row, col + 1))
-        if row - 1 >= 0 and col - 1 >= 0 and self.graph[row - 1, col - 1] == 1:
-            neighbours.append((row - 1, col - 1))
-        if row - 1 >= 0 and col + 1 < self.cols and self.graph[row - 1, col + 1] == 1:
-            neighbours.append((row - 1, col + 1))
-        if row + 1 < self.rows and col - 1 >= 0 and self.graph[row + 1, col - 1] == 1:
-            neighbours.append((row + 1, col - 1))
-        if row + 1 < self.rows and col + 1 < self.cols and self.graph[row + 1, col + 1] == 1:
-            neighbours.append((row + 1, col + 1))
+        if row - 1 >= 0 and self.graph[col, row-1] == 1:
+            neighbours.append((col, row-1))
+        if row + 1 < self.rows and self.graph[col, row + 1] == 1:
+            neighbours.append((col, row+1))
+        if col - 1 >= 0 and self.graph[col-1, row] == 1:
+            neighbours.append((col - 1, row))
+        if col + 1 < self.cols and self.graph[col + 1, row] == 1:
+            neighbours.append((col+1, row))
+        if row - 1 >= 0 and col - 1 >= 0 and self.graph[col - 1, row -1] == 1:
+            neighbours.append((col-1, row-1))
+        if row - 1 >= 0 and col + 1 < self.cols and self.graph[col+1, row-1] == 1:
+            neighbours.append((col+1, row-1))
+        if row + 1 < self.rows and col - 1 >= 0 and self.graph[col-1, row + 1] == 1:
+            neighbours.append((col - 1, row + 1))
+        if row + 1 < self.rows and col + 1 < self.cols and self.graph[col+1, row+1] == 1:
+            neighbours.append((col + 1, row + 1))
         return neighbours
 
 
@@ -88,6 +88,8 @@ class PathfindingAlgorithms:
         display.blit(surf, (0, 0))
         pygame.display.flip()
 
+        print(curr)
+
         visited.append(curr)
         for node in graph.get_valid_neighbours(curr[0], curr[1]):
             if node not in visited:
@@ -100,11 +102,10 @@ class PathfindingAlgorithms:
         visited.update(graph.get_valid_neighbours(start[0], start[1]))
 
 
-        print(queue)
-
         while queue != []:
 
             curr = queue.pop(0)
+            print(curr)
 
             surface.set_at(curr, (255, 0, 0))
             display.blit(surf, (0, 0))
@@ -130,9 +131,8 @@ surf = pygame.surfarray.make_surface(graph1.graph * 255)
 #
 display.blit(surf, (0, 0))
 alg = PathfindingAlgorithms()
-# alg.depth_first_search(graph1, (719, 859), (1, 432), [], surf) //this needs to be implemented iteratively
-alg.breadth_first_search(graph1, (719, 859), (393, 432), set(), surf)
-
+# alg.depth_first_search(graph1, (387, 611), (1, 432), [], surf) # this needs to be implemented iteratively
+alg.breadth_first_search(graph1, (407, 611), (393, 432), set(), surf)
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -145,6 +145,7 @@ while True:
                 pass
 
     pygame.display.flip()
+
 
 # cv2.imshow('w', thinned)
 #
