@@ -1,6 +1,4 @@
 import cv2
-import skan
-import matplotlib.pyplot as plt
 import numpy as np
 from typing import Tuple
 import numba
