@@ -3,17 +3,18 @@ import numpy as np
 from typing import Tuple
 import numba
 import pygame
+import math
 
 pygame.init()
 
-image = cv2.imread('maze2.jpg')
+maze = 'maze2.jpg'
+
+image = cv2.resize(cv2.imread(maze), (1280, 720))
 
 retVal, thresh = cv2.threshold(cv2.cvtColor(image, cv2.COLOR_RGB2GRAY), 0, 255,
                                cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
 thinned = np.array(cv2.ximgproc.thinning(thresh)) // 255
-
-cv2.imshow('t', thinned * 255)
 
 # cut borders
 
@@ -78,6 +79,11 @@ class MatrixGraph(object):
             neighbours.append((col + 1, row + 1))
         return neighbours
 
+    def euclidean_distance(self, node1, node2):
+        """Computes the euclidean distance between two points using Pythagoreas' theorem."""
+
+        return math.sqrt((node1[0] - node2[0])**2 + (node1[1] - node2[1])**2)
+
 
 class PathfindingAlgorithms:
 
@@ -107,7 +113,9 @@ class PathfindingAlgorithms:
 
             curr = queue.pop(0)
 
-            surface.set_at(curr, (255, 0, 0))
+            # surface.set_at(curr, (255, 0, 0))
+
+            pygame.draw.circle(surface, (255, 0, 0), curr, 3)
             display.blit(surf, (0, 0))
             pygame.display.flip()
 
@@ -132,6 +140,11 @@ class PathfindingAlgorithms:
 
         while stack != []:
             vertex = stack.pop()
+
+            pygame.draw.circle(surface, (255, 0, 0), vertex, 3)
+            display.blit(surf, (0, 0))
+            pygame.display.flip()
+
             if vertex == target:
                 return True
             elif vertex not in discovered:
@@ -139,11 +152,6 @@ class PathfindingAlgorithms:
                 neighbors = graph.get_valid_neighbours(vertex[0], vertex[1])
                 for neighbor in neighbors:
                     stack.append(neighbor)
-
-            surface.set_at(vertex, (255, 0, 0))
-            display.blit(surf, (0, 0))
-            pygame.display.flip()
-
         return False
 
 
@@ -153,28 +161,32 @@ graph1 = MatrixGraph(np.swapaxes(temp, 0, 1))
 # cv2.waitKey(0)
 
 pygame.init()
-display = pygame.display.set_mode((1000, 1000))
+display = pygame.display.set_mode((1280, 720))
+maze_img = pygame.transform.scale(pygame.image.load(maze), (1280, 720))
+display.blit(maze_img, (0, 0))
 
-# surf = pygame.surfarray.make_surface(np.swapaxes(graph1.graph, 0, 1) * 255)
-surf = pygame.surfarray.make_surface(graph1.graph * 255)
+# surf = pygame.surfarray.make_surface(graph1.graph * 255)
+surf = pygame.Surface((1280, 720), pygame.SRCALPHA, 32)
+surf = surf.convert_alpha()
 
 display.blit(surf, (0, 0))
 alg = PathfindingAlgorithms()
-# alg.depth_first_search(graph1, (387, 611), (1, 432), [], surf) # this needs to be implemented iteratively
-#alg.breadth_first_search(graph1, (537, 315), (393, 432), set(), surf)
-print(alg.depth_first_search_iterative(graph1, (537, 315), (393, 432), surf))
-# while True:
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             pygame.quit()
-#         if event.type == pygame.MOUSEMOTION:
-#             temp = pygame.mouse.get_pos()
-#             try:
-#                 print(temp, graph1.graph[temp])
-#             except:
-#                 pass
-#
-#     pygame.display.flip()
+# alg.breadth_first_search(graph1, (1212, 709), (393, 432), set(), surf)
+alg.depth_first_search_iterative(graph1, (1212, 709), (393, 432), surf)
+while True:
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            try:
+                posx, posy = pygame.mouse.get_pos()
+                print((posx, posy), graph1.graph[posx][posy])
+            except:
+                pass
+
+    pygame.time.wait(1)
+    pygame.display.flip()
 
 
 # cv2.imshow('w', thinned)
