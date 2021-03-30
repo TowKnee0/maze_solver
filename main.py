@@ -8,11 +8,10 @@ pygame.init()
 
 image = cv2.imread('maze2.jpg')
 
+retVal, thresh = cv2.threshold(cv2.cvtColor(image, cv2.COLOR_RGB2GRAY), 0, 255,
+                               cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
-
-retVal, thresh = cv2.threshold(cv2.cvtColor(image, cv2.COLOR_RGB2GRAY), 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-
-thinned = np.array(cv2.ximgproc.thinning(thresh))//255
+thinned = np.array(cv2.ximgproc.thinning(thresh)) // 255
 
 cv2.imshow('t', thinned * 255)
 
@@ -20,8 +19,6 @@ cv2.imshow('t', thinned * 255)
 
 temp = np.delete(thinned, [0, thinned.shape[1] - 1], axis=1)
 temp = np.delete(thinned, [0, thinned.shape[0] - 1], axis=0)
-
-
 
 # This along with the decorator complies each method into machine code the first
 # time its called. Then each subsequent call runs from machine code meaning
@@ -34,10 +31,10 @@ temp = np.delete(thinned, [0, thinned.shape[0] - 1], axis=0)
 
 # Note: the first call to a method may be slower
 spec = [
-        ('graph', numba.uint8[:, :]),
-        ('rows', numba.uint16),
-        ('cols', numba.uint16)
-        ]
+    ('graph', numba.uint8[:, :]),
+    ('rows', numba.uint16),
+    ('cols', numba.uint16)
+]
 
 
 @numba.experimental.jitclass(spec)
@@ -63,28 +60,29 @@ class MatrixGraph(object):
         # col = cord[0]
         # row = cord[1]
 
-        if row - 1 >= 0 and self.graph[col, row-1] == 1:
-            neighbours.append((col, row-1))
+        if row - 1 >= 0 and self.graph[col, row - 1] == 1:
+            neighbours.append((col, row - 1))
         if row + 1 < self.rows and self.graph[col, row + 1] == 1:
-            neighbours.append((col, row+1))
-        if col - 1 >= 0 and self.graph[col-1, row] == 1:
+            neighbours.append((col, row + 1))
+        if col - 1 >= 0 and self.graph[col - 1, row] == 1:
             neighbours.append((col - 1, row))
         if col + 1 < self.cols and self.graph[col + 1, row] == 1:
-            neighbours.append((col+1, row))
-        if row - 1 >= 0 and col - 1 >= 0 and self.graph[col - 1, row -1] == 1:
-            neighbours.append((col-1, row-1))
-        if row - 1 >= 0 and col + 1 < self.cols and self.graph[col+1, row-1] == 1:
-            neighbours.append((col+1, row-1))
-        if row + 1 < self.rows and col - 1 >= 0 and self.graph[col-1, row + 1] == 1:
+            neighbours.append((col + 1, row))
+        if row - 1 >= 0 and col - 1 >= 0 and self.graph[col - 1, row - 1] == 1:
+            neighbours.append((col - 1, row - 1))
+        if row - 1 >= 0 and col + 1 < self.cols and self.graph[col + 1, row - 1] == 1:
+            neighbours.append((col + 1, row - 1))
+        if row + 1 < self.rows and col - 1 >= 0 and self.graph[col - 1, row + 1] == 1:
             neighbours.append((col - 1, row + 1))
-        if row + 1 < self.rows and col + 1 < self.cols and self.graph[col+1, row+1] == 1:
+        if row + 1 < self.rows and col + 1 < self.cols and self.graph[col + 1, row + 1] == 1:
             neighbours.append((col + 1, row + 1))
         return neighbours
 
 
 class PathfindingAlgorithms:
 
-    def depth_first_search(self, graph: MatrixGraph, curr: Tuple[int, int], target: Tuple[int, int], visited, surface):
+    def depth_first_search(self, graph: MatrixGraph, curr: Tuple[int, int], target: Tuple[int, int],
+                           visited, surface):
         if curr == target:
             return True
 
@@ -105,7 +103,6 @@ class PathfindingAlgorithms:
         queue.extend(graph.get_valid_neighbours(start[0], start[1]))
         visited.update(graph.get_valid_neighbours(start[0], start[1]))
 
-
         while queue != []:
 
             curr = queue.pop(0)
@@ -122,7 +119,32 @@ class PathfindingAlgorithms:
                     visited.add(node)
         return False
 
+    def depth_first_search_iterative(self, graph: MatrixGraph, start: Tuple, target: Tuple, surface) -> bool:
+        """
+        Return true if target is found, return false otherwise.
 
+        This is an iterative version of depth_first_search, since the recursive version exceeds
+        the maximum recursion depth.
+        """
+        discovered = set()
+        stack = [start]  # Stack is a reversed list for now. Later we can make a stack class if we
+                         # need
+
+        while stack != []:
+            vertex = stack.pop()
+            if vertex == target:
+                return True
+            elif vertex not in discovered:
+                discovered.add(vertex)
+                neighbors = graph.get_valid_neighbours(vertex[0], vertex[1])
+                for neighbor in neighbors:
+                    stack.append(neighbor)
+
+            surface.set_at(vertex, (255, 0, 0))
+            display.blit(surf, (0, 0))
+            pygame.display.flip()
+
+        return False
 
 
 graph1 = MatrixGraph(np.swapaxes(temp, 0, 1))
@@ -139,19 +161,20 @@ surf = pygame.surfarray.make_surface(graph1.graph * 255)
 display.blit(surf, (0, 0))
 alg = PathfindingAlgorithms()
 # alg.depth_first_search(graph1, (387, 611), (1, 432), [], surf) # this needs to be implemented iteratively
-alg.breadth_first_search(graph1, (537, 315), (393, 432), set(), surf)
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-        if event.type == pygame.MOUSEMOTION:
-            temp = pygame.mouse.get_pos()
-            try:
-                print(temp, graph1.graph[temp])
-            except:
-                pass
-
-    pygame.display.flip()
+#alg.breadth_first_search(graph1, (537, 315), (393, 432), set(), surf)
+print(alg.depth_first_search_iterative(graph1, (537, 315), (393, 432), surf))
+# while True:
+#     for event in pygame.event.get():
+#         if event.type == pygame.QUIT:
+#             pygame.quit()
+#         if event.type == pygame.MOUSEMOTION:
+#             temp = pygame.mouse.get_pos()
+#             try:
+#                 print(temp, graph1.graph[temp])
+#             except:
+#                 pass
+#
+#     pygame.display.flip()
 
 
 # cv2.imshow('w', thinned)
