@@ -79,10 +79,29 @@ class MatrixGraph(object):
             neighbours.append((col + 1, row + 1))
         return neighbours
 
-    def euclidean_distance(self, node1, node2):
+    @staticmethod
+    def euclidean_distance(node1, node2):
         """Computes the euclidean distance between two points using Pythagoreas' theorem."""
 
         return math.sqrt((node1[0] - node2[0])**2 + (node1[1] - node2[1])**2)
+
+    def closest_path(self, point, radius):
+        temp = []
+
+        for y in range(point[1] - radius - 1, point[1] + radius):
+            for x in range(point[0] - radius - 1, point[0] + radius):
+
+                if 0 <= y < self.rows and 0 <= x < self.cols and self.graph[x, y] == 1:
+                    temp.append((x, y))
+        index = 0
+        min_so_far = self.euclidean_distance(temp[0], point)
+
+        for i in range(len(temp)):
+            if self.euclidean_distance(temp[i], point) < min_so_far:
+                min_so_far = self.euclidean_distance(temp[i], point)
+                index = i
+
+        return temp[index]
 
 
 class PathfindingAlgorithms:
@@ -172,18 +191,53 @@ surf = surf.convert_alpha()
 display.blit(surf, (0, 0))
 alg = PathfindingAlgorithms()
 # alg.breadth_first_search(graph1, (1212, 709), (393, 432), set(), surf)
-alg.depth_first_search_iterative(graph1, (1212, 709), (393, 432), surf)
+# alg.depth_first_search_iterative(graph1, (1212, 709), (393, 432), surf)
+start = None
+end = None
+once = True
+
 while True:
+
+    if start is not None and end is not None and once:
+        alg.breadth_first_search(graph1, start, end, set(), surf)
+        once = False
+
+
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
         if event.type == pygame.MOUSEBUTTONDOWN:
-            try:
+            pass
+            # try:
+            #     posx, posy = pygame.mouse.get_pos()
+            #     # print((posx, posy), graph1.graph[posx][posy])
+            #     temp = graph1.closest_path(np.array((posx, posy)), 5)
+            #     print(temp)
+            #     surf.set_at(temp, (0, 255, 0))
+            #     display.blit(surf, (0, 0))
+            #     pygame.display.flip()
+            # except Exception as e:
+            #     print(e)
+            #     pass
+        if event.type == pygame.KEYDOWN:
+            pressed = pygame.key.get_pressed()
+            posx, posy = pygame.mouse.get_pos()
+
+            if pressed[pygame.K_b]:
+                temp = graph1.closest_path(np.array((posx, posy)), 5)
+                if temp is not None:
+                    start = temp
+                    surf.set_at(temp, (0, 255, 0))
+                    display.blit(surf, (0, 0))
+
+            if pressed[pygame.K_e]:
                 posx, posy = pygame.mouse.get_pos()
-                print((posx, posy), graph1.graph[posx][posy])
-            except:
-                pass
+                temp = graph1.closest_path(np.array((posx, posy)), 10)
+                if temp is not None:
+                    surf.set_at(temp, (0, 255, 0))
+                    display.blit(surf, (0, 0))
+                    end = temp
 
     pygame.time.wait(1)
     pygame.display.flip()
