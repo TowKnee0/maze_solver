@@ -4,6 +4,7 @@ from typing import Tuple
 import numba
 import pygame
 import math
+import pygame_widgets
 
 pygame.init()
 
@@ -132,7 +133,6 @@ class PathfindingAlgorithms:
 
             curr = queue.pop(0)
 
-            # surface.set_at(curr, (255, 0, 0))
 
             pygame.draw.circle(surface, (255, 0, 0), curr, 3)
             display.blit(surf, (0, 0))
@@ -173,6 +173,61 @@ class PathfindingAlgorithms:
                     stack.append(neighbor)
         return False
 
+class Button:
+    def __init__(self, rect: Tuple[int, int, int, int], text: str, color: Tuple[int, int, int]):
+        self.rect = rect
+        self.text = text
+        self.color = color
+        self.text_surface = pygame.font.SysFont('Arial', 20).render(self.text, False, (0, 0, 0))
+        self.text_pos = self._compute_text_location()
+
+    def _compute_text_location(self) -> Tuple[int, int]:
+        text_w = self.text_surface.get_width()
+        text_h = self.text_surface.get_height()
+
+        x_pos = (self.rect[0] + self.rect[2] // 2) - text_w // 2
+        y_pos = (self.rect[1] + self.rect[3] // 2) - text_h // 2
+        return (x_pos, y_pos)
+
+    def draw(self, display: pygame.display) -> None:
+        pygame.draw.rect(display, self.color, self.rect)
+        display.blit(self.text_surface, self.text_pos)
+
+    def check_pressed(self, posx: int, posy: int):
+        pyrect = pygame.Rect(self.rect)
+        if pyrect.collidepoint(posx, posy):
+            return True
+        else:
+            return False
+
+class ToggleButton(Button):
+    def __init__(self, rect: Tuple[int, int, int, int], text: str, color: Tuple[int, int, int]):
+        Button.__init__(self, rect, text, color)
+        self.active = False
+
+    def check_pressed(self, posx: int, posy: int):
+        pyrect = pygame.Rect(self.rect)
+        if pyrect.collidepoint(posx, posy):
+            self.active = not self.active
+        else:
+            self.active = False
+
+    def draw(self, display: pygame.display) -> None:
+        if self.active:
+            color = (self.color[0], self.color[1], self.color[2] + 255)
+        else:
+            color = self.color
+        pygame.draw.rect(display, color, self.rect)
+        display.blit(self.text_surface, self.text_pos)
+
+    def set_pos(self, graph: MatrixGraph, posx, posy):
+        if self.active:
+            try:
+                return graph.closest_path((posx, posy), 5)
+            except:
+                print('Select point closer to path')
+                return None
+
 
 graph1 = MatrixGraph(np.swapaxes(temp, 0, 1))
 
@@ -190,6 +245,11 @@ surf = surf.convert_alpha()
 
 display.blit(surf, (0, 0))
 alg = PathfindingAlgorithms()
+
+start_button = ToggleButton((10, 10, 100, 50), 'Start', (0, 170, 0))
+end_button = ToggleButton((110, 10, 100, 50), 'End', (170, 0, 0))
+restart_button = Button((1000, 10, 100, 50), 'Restart', (255, 0, 0))
+
 # alg.breadth_first_search(graph1, (1212, 709), (393, 432), set(), surf)
 # alg.depth_first_search_iterative(graph1, (1212, 709), (393, 432), surf)
 start = None
@@ -197,48 +257,46 @@ end = None
 once = True
 
 while True:
+    # print(start, end)
+    if start is not None:
+        pygame.draw.circle(surf, (0, 255, 0), start, 3)
+    if end is not None:
+        pygame.draw.circle(surf, (255, 0, 0), end, 3)
 
+    # print(start, end)
     if start is not None and end is not None and once:
         alg.breadth_first_search(graph1, start, end, set(), surf)
         once = False
 
+    start_button.draw(display)
+    end_button.draw(display)
+    restart_button.draw(display)
 
-
-    for event in pygame.event.get():
+    events = pygame.event.get()
+    for event in events:
         if event.type == pygame.QUIT:
             pygame.quit()
         if event.type == pygame.MOUSEBUTTONDOWN:
-            pass
-            # try:
-            #     posx, posy = pygame.mouse.get_pos()
-            #     # print((posx, posy), graph1.graph[posx][posy])
-            #     temp = graph1.closest_path(np.array((posx, posy)), 5)
-            #     print(temp)
-            #     surf.set_at(temp, (0, 255, 0))
-            #     display.blit(surf, (0, 0))
-            #     pygame.display.flip()
-            # except Exception as e:
-            #     print(e)
-            #     pass
-        if event.type == pygame.KEYDOWN:
-            pressed = pygame.key.get_pressed()
             posx, posy = pygame.mouse.get_pos()
 
-            if pressed[pygame.K_b]:
-                temp = graph1.closest_path(np.array((posx, posy)), 5)
-                if temp is not None:
-                    start = temp
-                    surf.set_at(temp, (0, 255, 0))
-                    display.blit(surf, (0, 0))
+            if start_button.active:
+                start = start_button.set_pos(graph1, posx, posy)
+            start_button.check_pressed(posx, posy)
 
-            if pressed[pygame.K_e]:
-                posx, posy = pygame.mouse.get_pos()
-                temp = graph1.closest_path(np.array((posx, posy)), 10)
-                if temp is not None:
-                    surf.set_at(temp, (0, 255, 0))
-                    display.blit(surf, (0, 0))
-                    end = temp
+            if end_button.active:
+                end = end_button.set_pos(graph1, posx, posy)
+            end_button.check_pressed(posx, posy)
 
+            if restart_button.check_pressed(posx, posy):
+                once = True
+                start = None
+                end = None
+                start_button.active = False
+                end_button.active = False
+                display.blit(maze_img, (0, 0))
+                surf.fill((255, 255, 255, 0))
+
+    display.blit(surf, (0, 0))
     pygame.time.wait(1)
     pygame.display.flip()
 
