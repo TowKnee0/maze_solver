@@ -38,7 +38,7 @@ class MatrixGraph(object):
         self.graph = matrix
         self.cols, self.rows = matrix.shape
 
-    def get_valid_neighbours(self, col, row) -> list[Tuple]:
+    def get_valid_neighbours(self, col, row) -> list[tuple]:
         """Not elegant but fast(enough for now)
         Return a list of pixels that are adjacent to (col, row)
 
