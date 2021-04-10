@@ -1,11 +1,30 @@
+"""
+algorithms.py:
+Contains the PathfindingAlgorithms class which contains various path finding functions.
+
+CSC111 Final Project by Tony He, Austin Blackman, Ifaz Alam
+"""
+
 import pygame
 from matrix_graph import MatrixGraph
 from typing import Tuple
 
 
 class PathfindingAlgorithms:
+    """
+    A class used to store various path finding pathfinding algorithms
 
-    def breadth_first_search(self, graph, start, target, visited, surface, display):
+    Sample Usage:
+    >>> algorithms = PathfindingAlgorithms()
+    """
+
+    def breadth_first_search(self, graph: MatrixGraph, start: tuple, target: tuple, visited: set,
+                             surface, display) -> bool:
+        """
+        Return true if target is found, return false otherwise.
+
+        This function is an implementation of the breadth_first_search pathfinding algorithm
+        """
         queue = []
         queue.extend(graph.get_valid_neighbours(start[0], start[1]))
         visited.update(graph.get_valid_neighbours(start[0], start[1]))
@@ -14,6 +33,7 @@ class PathfindingAlgorithms:
 
             curr = queue.pop(0)
 
+            # Visualize step
             pygame.draw.circle(surface, (255, 0, 0), curr, 3)
             display.blit(surface, (0, 0))
             pygame.display.flip()
@@ -26,7 +46,7 @@ class PathfindingAlgorithms:
                     visited.add(node)
         return False
 
-    def depth_first_search_iterative(self, graph: MatrixGraph, start: Tuple, target: Tuple,
+    def depth_first_search_iterative(self, graph: MatrixGraph, start: tuple, target: tuple,
                                      surface, display) -> bool:
         """
         Return true if target is found, return false otherwise.
@@ -41,6 +61,7 @@ class PathfindingAlgorithms:
         while stack != []:
             vertex = stack.pop()
 
+            # Visualize step
             pygame.draw.circle(surface, (255, 0, 0), vertex, 3)
             display.blit(surface, (0, 0))
             pygame.display.flip()

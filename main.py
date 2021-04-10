@@ -1,3 +1,10 @@
+"""
+main.py:
+Contains the main method of the program
+
+CSC111 Final Project by Tony He, Austin Blackman, Ifaz Alam
+"""
+
 import cv2
 import numpy as np
 from typing import Tuple
@@ -41,6 +48,7 @@ surf = surf.convert_alpha()
 display.blit(surf, (0, 0))
 alg = PathfindingAlgorithms()
 
+# Initialize the buttons
 start_button = ToggleButton((10, 10, 100, 50), 'Start', (0, 170, 0))
 end_button = ToggleButton((110, 10, 100, 50), 'End', (170, 0, 0))
 restart_button = Button((1000, 10, 100, 50), 'Restart', (255, 0, 0))
@@ -63,6 +71,8 @@ while True:
         alg.breadth_first_search(graph1, start, end, set(), surf, display)
         once = False
 
+    # Draw the buttons
+    print('test')
     start_button.draw(display)
     end_button.draw(display)
     restart_button.draw(display)

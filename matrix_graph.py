@@ -1,8 +1,16 @@
+"""
+matrix_graph.py:
+Contains the MatrixGraph class which is used to store pixel connections
+
+CSC111 Final Project by Tony He, Austin Blackman, Ifaz Alam
+"""
+
 import numba
 import numpy as np
 import math
 from typing import Tuple
 
+# Numba requirements
 spec = [
     ('graph', numba.uint8[:, :]),
     ('rows', numba.uint16),
@@ -24,11 +32,17 @@ class MatrixGraph(object):
     cols: int
 
     def __init__(self, matrix: np.ndarray) -> None:
+        """
+        Initialize a Matrix Graph
+        """
         self.graph = matrix
         self.cols, self.rows = matrix.shape
 
     def get_valid_neighbours(self, col, row) -> list[Tuple]:
-        """Not elegant but fast(enough for now)"""
+        """Not elegant but fast(enough for now)
+        Return a list of pixels that are adjacent to (col, row)
+
+        """
         neighbours = []
         # col = cord[0]
         # row = cord[1]
@@ -52,12 +66,18 @@ class MatrixGraph(object):
         return neighbours
 
     @staticmethod
-    def euclidean_distance(node1, node2):
-        """Computes the euclidean distance between two points using Pythagoreas' theorem."""
+    def euclidean_distance(node1: tuple[int, int], node2: tuple[int, int]) -> float:
+        """
+        Return a float that represents the euclidean distance between two points using Pythagoreas'
+        Theorem
+        """
 
         return math.sqrt((node1[0] - node2[0]) ** 2 + (node1[1] - node2[1]) ** 2)
 
-    def closest_path(self, point, radius):
+    def closest_path(self, point: tuple[int, int], radius: int) -> tuple[int, int]:
+        """
+        Return a tuple of ints that represents the closest path to point within a certain radius
+        """
         temp = []
 
         for y in range(point[1] - radius - 1, point[1] + radius):
