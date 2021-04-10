@@ -68,7 +68,7 @@ while True:
 
     # print(start, end)
     if start is not None and end is not None and once:
-        alg.breadth_first_search(graph1, start, end, set(), surf, display)
+        print(alg.breadth_first_search(graph1, start, end, set(), surf, display))
         once = False
 
     # Draw the buttons
