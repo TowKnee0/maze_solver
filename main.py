@@ -12,33 +12,36 @@ import pygame
 from matrix_graph import MatrixGraph
 from algorithms import PathfindingAlgorithms
 from button import Button, ToggleButton
-
+from image_processing import crop_image
 
 pygame.init()
 
-maze = 'maze2.jpg'
+maze = 'maze3.jpg'
 
 image = cv2.resize(cv2.imread(maze), (1280, 720))
 
-retVal, thresh = cv2.threshold(cv2.cvtColor(image, cv2.COLOR_RGB2GRAY), 0, 255,
-                               cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+cropped = crop_image(image)
+
+retVal, thresh = cv2.threshold(cv2.cvtColor(cropped, cv2.COLOR_RGB2GRAY), 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+
 
 thinned = np.array(cv2.ximgproc.thinning(thresh)) // 255
 
 # cut borders
 
-temp = np.delete(thinned, [0, thinned.shape[1] - 1], axis=1)
-temp = np.delete(thinned, [0, thinned.shape[0] - 1], axis=0)
+# temp = np.delete(thinned, [0, thinned.shape[1] - 1], axis=1)
+# temp = np.delete(thinned, [0, thinned.shape[0] - 1], axis=0)
 
 
-graph1 = MatrixGraph(np.swapaxes(temp, 0, 1))
+graph1 = MatrixGraph(np.swapaxes(thinned, 0, 1))
 
 # cv2.imshow('t', temp * 255)
 # cv2.waitKey(0)
 
 pygame.init()
 display = pygame.display.set_mode((1280, 720))
-maze_img = pygame.transform.scale(pygame.image.load(maze), (1280, 720))
+# maze_img = pygame.transform.scale(pygame.image.load(cropped), (1280, 720))
+maze_img = pygame.surfarray.make_surface(np.swapaxes(cropped, 0, 1))
 display.blit(maze_img, (0, 0))
 
 # surf = pygame.surfarray.make_surface(graph1.graph * 255)
@@ -73,7 +76,6 @@ while True:
         once = False
 
     # Draw the buttons
-    print('test')
     start_button.draw(display)
     end_button.draw(display)
     restart_button.draw(display)
