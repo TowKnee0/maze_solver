@@ -132,10 +132,11 @@ class PathfindingAlgorithms:
             return final_path
 
     def a_star(self, graph: MatrixGraph, start: tuple, target: tuple,
-                             surface, display) -> list[tuple]:
+               surface, display) -> list[tuple]:
         """
         The heuristic used is the distance from target to the current node
-        if f(n) = 0 we have reached our node, our promising choice is the min(f(n)) for each neighbour
+        if f(n) = 0 we have reached our node, our promising choice is the min(f(n)) for each
+        neighbour
         """
         # Priority queue of tuples (node, step cost, distance from target, prev_node)
         # priority with respect to smallest distance from target
@@ -200,7 +201,3 @@ class PathfindingAlgorithms:
             path.append((col, row))
 
         return path
-
-
-
-
