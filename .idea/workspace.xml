@@ -20,10 +20,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fb9bd826-9a6d-41e5-98d1-765aad673153" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/maze4.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/algorithms.py" beforeDir="false" afterPath="$PROJECT_DIR$/algorithms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/image_processing.py" beforeDir="false" afterPath="$PROJECT_DIR$/image_processing.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -169,7 +167,7 @@
       <workItem from="1618065758164" duration="4242000" />
       <workItem from="1618169219351" duration="99000" />
       <workItem from="1618169405365" duration="965000" />
-      <workItem from="1618243800494" duration="6969000" />
+      <workItem from="1618243800494" duration="11832000" />
     </task>
     <servers />
   </component>

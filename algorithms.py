@@ -18,15 +18,21 @@ class PathfindingAlgorithms:
         - iteration_text_background: A white pygame surface that acts as a background for the
                                      text of the iteration counter
         - iteration_text_pos: A tuple that represents where to draw the iteration counter
-
+        - maze_x_offset: An integer that represents how much the drawing of the maze needs to be
+                         shifted in the x direction inorder to account for the maze being centered
+        - maze_y_offset: An integer that represents how much the drawing of the maze needs to be
+                         shifted in the y direction inorder to account for the maze being centered
     Sample Usage:
     >>> algorithms = PathfindingAlgorithms((200, 200))
     """
 
     iteration_text_background: pygame.Surface
     iteration_text_pos: tuple[int, int]
+    maze_x_offset: int
+    maze_y_offset: int
 
-    def __init__(self, iteration_counter_pos: tuple[int, int]) -> None:
+    def __init__(self, iteration_counter_pos: tuple[int, int], maze_x_offset: int,
+                 maze_y_offset: int) -> None:
         """
         Initialize a PathfindingAlgorithms Object
         """
@@ -34,6 +40,8 @@ class PathfindingAlgorithms:
         # possible to search
         self.iteration_text_background = self._get_text_surface(max_string)
         self.iteration_text_pos = iteration_counter_pos
+        self.maze_x_offset = maze_x_offset
+        self.maze_y_offset = maze_y_offset
 
     def breadth_first_search(self, graph: MatrixGraph, start: tuple, target: tuple,
                              surface, display) -> list[tuple]:
@@ -67,7 +75,9 @@ class PathfindingAlgorithms:
             curr = queue.pop(0)
 
             # Visualize step
-            pygame.draw.circle(surface, (255, 0, 0), curr, 3)
+            curr_x = curr[0] + self.maze_x_offset
+            curr_y = curr[1] + self.maze_y_offset
+            pygame.draw.circle(surface, (255, 0, 0), (curr_x, curr_y), 3)
             display.blit(surface, (0, 0))
             pygame.display.flip()
 
@@ -112,7 +122,9 @@ class PathfindingAlgorithms:
             vertex = stack.pop()
 
             # Visualize step
-            pygame.draw.circle(surface, (255, 0, 0), vertex, 3)
+            curr_x = vertex[0] + self.maze_x_offset
+            curr_y = vertex[1] + self.maze_y_offset
+            pygame.draw.circle(surface, (255, 0, 0), (curr_x, curr_y), 3)
             display.blit(surface, (0, 0))
             pygame.display.flip()
 
@@ -217,13 +229,16 @@ class PathfindingAlgorithms:
             final_path_so_far.insert(0, current_node)
             current_node = paths[current_node]
             # Draw the final path
-            pygame.draw.circle(surface, (0, 255, 0), current_node, 3)
+            curr_x = current_node[0] + self.maze_x_offset
+            curr_y = current_node[1] + self.maze_y_offset
+            pygame.draw.circle(surface, (0, 255, 0), (curr_x, curr_y), 3)
 
         # Insert the first node
         final_path_so_far.insert(0, start)
 
         # Draw the final path
-        pygame.draw.circle(surface, (0, 255, 0), start, 3)
+        pygame.draw.circle(surface, (0, 255, 0), (start[0] + self.maze_x_offset,
+                                                  start[0] + self.maze_y_offset), 3)
         display.blit(surface, (0, 0))
         pygame.display.flip()
         return final_path_so_far
