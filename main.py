@@ -16,7 +16,7 @@ from image_processing import crop_image
 
 pygame.init()
 
-maze = 'maze3.jpg'
+maze = 'maze4.png'
 
 image = cv2.resize(cv2.imread(maze), (1280, 720))
 
@@ -49,7 +49,7 @@ surf = pygame.Surface((1280, 720), pygame.SRCALPHA, 32)
 surf = surf.convert_alpha()
 
 display.blit(surf, (0, 0))
-alg = PathfindingAlgorithms()
+alg = PathfindingAlgorithms((100, 50))
 
 # Initialize the buttons
 start_button = ToggleButton((10, 10, 100, 50), 'Start', (0, 170, 0))
@@ -72,7 +72,7 @@ while True:
     # print(start, end)
     if start is not None and end is not None and once:
         # print(alg.breadth_first_search(graph1, start, end, set(), surf, display))
-        print(alg.breadth_first_search(graph1, start, end, set(), surf, display))
+        print(alg.breadth_first_search(graph1, start, end, surf, display))
         once = False
 
     # Draw the buttons

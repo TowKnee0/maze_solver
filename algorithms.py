@@ -14,11 +14,28 @@ class PathfindingAlgorithms:
     """
     A class used to store various path finding pathfinding algorithms
 
+    Instance Attributes:
+        - iteration_text_background: A white pygame surface that acts as a background for the
+                                     text of the iteration counter
+        - iteration_text_pos: A tuple that represents where to draw the iteration counter
+
     Sample Usage:
-    >>> algorithms = PathfindingAlgorithms()
+    >>> algorithms = PathfindingAlgorithms((200, 200))
     """
 
-    def breadth_first_search(self, graph: MatrixGraph, start: tuple, target: tuple, visited: set,
+    iteration_text_background: pygame.Surface
+    iteration_text_pos: tuple[int, int]
+
+    def __init__(self, iteration_counter_pos: tuple[int, int]) -> None:
+        """
+        Initialize a PathfindingAlgorithms Object
+        """
+        max_string = f'Current Iteration + {1920 * 1080}'  # Max is the largest number of pixels
+        # possible to search
+        self.iteration_text_background = self._get_text_surface(max_string)
+        self.iteration_text_pos = iteration_counter_pos
+
+    def breadth_first_search(self, graph: MatrixGraph, start: tuple, target: tuple,
                              surface, display) -> list[tuple]:
         """
         Return true if target is found, return false otherwise.
@@ -26,6 +43,7 @@ class PathfindingAlgorithms:
         This function is an implementation of the breadth_first_search pathfinding algorithm
         """
         queue = []
+        visited = set()
         paths = {}
         queue.extend(graph.get_valid_neighbours(start[0], start[1]))
         visited.update(graph.get_valid_neighbours(start[0], start[1]))
@@ -35,8 +53,17 @@ class PathfindingAlgorithms:
             paths[node] = start
         found = False
 
+        # Variables and Surfaces used to display the current iterations
+        counter = 0
+
         while queue != [] and not found:
 
+            # Draw and update the loop iteration counter
+            counter += 1
+            iteration_counter = f'Current Iteration: {counter}'
+            self._draw_loop_iterations(iteration_counter, surface)
+
+            # Pop the current node
             curr = queue.pop(0)
 
             # Visualize step
@@ -57,24 +84,7 @@ class PathfindingAlgorithms:
         if found is False:
             return []
         else:
-            # Trace the path back to the start, the list is traversed backwards, so we insert to
-            # the front of the list
-            final_path = []
-            current_node = target
-            while current_node != start:
-                final_path.insert(0, current_node)
-                current_node = paths[current_node]
-                # Draw the final path
-                pygame.draw.circle(surface, (0, 255, 0), current_node, 3)
-
-            # Insert the first node
-            final_path.insert(0, start)
-
-            # Draw the final path
-            pygame.draw.circle(surface, (0, 255, 0), start, 3)
-            display.blit(surface, (0, 0))
-            pygame.display.flip()
-            return final_path
+            return self._find_and_draw_final_path(paths, start, target, surface, display)
 
     def depth_first_search_iterative(self, graph: MatrixGraph, start: tuple, target: tuple,
                                      surface, display) -> list[tuple[int, int]]:
@@ -90,7 +100,15 @@ class PathfindingAlgorithms:
         paths = {}  # A dictionary that maps new nodes to the previous node
         found = False
 
+        # Variables and Surfaces used to display the current iterations
+        counter = 0
+
         while stack != [] and not found:
+            # Draw and update the loop iteration counter
+            counter += 1
+            iteration_counter = f'Current Iteration: {counter}'
+            self._draw_loop_iterations(iteration_counter, surface)
+
             vertex = stack.pop()
 
             # Visualize step
@@ -112,24 +130,7 @@ class PathfindingAlgorithms:
         if found is False:
             return []
         else:
-            # Trace the path back to the start, the list is traversed backwards, so we insert to
-            # the front of the list
-            final_path = []
-            current_node = target
-            while current_node != start:
-                final_path.insert(0, current_node)
-                current_node = paths[current_node]
-                # Draw the final path
-                pygame.draw.circle(surface, (0, 255, 0), current_node, 3)
-
-            # Insert the first node
-            final_path.insert(0, start)
-
-            # Draw the final path
-            pygame.draw.circle(surface, (0, 255, 0), start, 3)
-            display.blit(surface, (0, 0))
-            pygame.display.flip()
-            return final_path
+            return self._find_and_draw_final_path(paths, start, target, surface, display)
 
     def a_star(self, graph: MatrixGraph, start: tuple, target: tuple,
                surface, display) -> list[tuple]:
@@ -201,3 +202,47 @@ class PathfindingAlgorithms:
             path.append((col, row))
 
         return path
+
+    def _find_and_draw_final_path(self, paths: dict[tuple[int, int], tuple[int, int]],
+                                  start: tuple, target: tuple, surface, display) -> \
+            list[tuple[int, int]]:
+        """
+        Return a list of tuples that corresponds to the path found by the algorithm that calls
+        this function
+        """
+
+        final_path_so_far = []
+        current_node = target
+        while current_node != start:
+            final_path_so_far.insert(0, current_node)
+            current_node = paths[current_node]
+            # Draw the final path
+            pygame.draw.circle(surface, (0, 255, 0), current_node, 3)
+
+        # Insert the first node
+        final_path_so_far.insert(0, start)
+
+        # Draw the final path
+        pygame.draw.circle(surface, (0, 255, 0), start, 3)
+        display.blit(surface, (0, 0))
+        pygame.display.flip()
+        return final_path_so_far
+
+    def _draw_loop_iterations(self, loop_iters: str, surface: pygame.Surface) -> None:
+        """
+        Draw the current loop iterations at the specified position
+        """
+        text_surface = pygame.font.SysFont('Arial', 20).render(loop_iters, True, (0, 0, 0))
+        surface.blit(self.iteration_text_background, self.iteration_text_pos)
+        surface.blit(text_surface, self.iteration_text_pos)
+
+    def _get_text_surface(self, longest_text: str) -> pygame.Surface:
+        """
+        Return a white box that is the size of the maximum possible text being rendered
+        """
+        text_surface = pygame.font.SysFont('Arial', 20).render(longest_text, True, (0, 0, 0))
+        text_h = text_surface.get_height()
+        text_w = text_surface.get_width()
+        white = pygame.Surface((text_w, text_h))
+        white.fill((255, 255, 255))
+        return white

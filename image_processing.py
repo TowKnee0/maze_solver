@@ -1,6 +1,20 @@
-import cv2
+"""
+image_processing.py:
+Contains a method used to handle processing the input images
 
-def crop_image(image):
+CSC111 Final Project by Tony He, Austin Blackman, Ifaz Alam
+"""
+import cv2
+import numpy as np
+
+
+def crop_image(image: np.ndarray) -> np.ndarray:
+    """
+    Return a cropped version of the inputted maze image.
+
+    This function is used to find the two longest contours (edges) and trims the unnecessary parts
+    of the image
+    """
     image_gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     blurred = cv2.GaussianBlur(image_gray, (3, 3), 0)
 
@@ -14,12 +28,14 @@ def crop_image(image):
     longest_2 = cont_per[0:2]
     rects = [cv2.boundingRect(tup[0]) for tup in longest_2]
 
-    min_x0, min_y0, max_x0, max_y0 = rects[0][0], rects[0][1], rects[0][0] + rects[0][2], rects[0][1] + rects[0][3]
-    min_x1, min_y1, max_x1, max_y1 = rects[1][0], rects[1][1], rects[1][0] + rects[1][2], rects[1][1] + rects[1][3]
-    min_x = min(min_x0, min_x1)
-    min_y = min(min_y0, min_y1)
-    max_x = max(max_x0, max_x1)
-    max_y = max(max_y0, max_y1)
+    min_x0, min_y0, max_x0, max_y0 = rects[0][0], rects[0][1], rects[0][0] + rects[0][2], rects[0][
+        1] + rects[0][3]
+    min_x1, min_y1, max_x1, max_y1 = rects[1][0], rects[1][1], rects[1][0] + rects[1][2], rects[1][
+        1] + rects[1][3]
+    min_x = min(min_x0, min_x1) + 1
+    min_y = min(min_y0, min_y1) + 1
+    max_x = max(max_x0, max_x1) - 1
+    max_y = max(max_y0, max_y1) - 1
 
     filtered_copy = thresh1.copy()
     cv2.rectangle(filtered_copy, (min_x, min_y), (max_x, max_y), 0, 1)
