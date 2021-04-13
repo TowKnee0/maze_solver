@@ -21,7 +21,7 @@ PADDING_X = round(.10 * 1280)
 
 pygame.init()
 
-maze = 'maze3.jpg'
+maze = 'maze4.png'
 
 image = cv2.resize(cv2.imread(maze), (1280, 720))
 
@@ -92,7 +92,7 @@ while True:
     # print(start, end)
     if start is not None and end is not None and once:
         # print(alg.breadth_first_search(graph1, start, end, set(), surf, display))
-        print(alg.breadth_first_search(graph1, start, end, surf, display))
+        print(alg.depth_first_search_iterative(graph1, start, end, surf, display))
         once = False
 
     # Draw the buttons

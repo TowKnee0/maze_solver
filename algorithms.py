@@ -124,6 +124,9 @@ class PathfindingAlgorithms:
         # Variables and Surfaces used to display the current iterations
         counter = 0
 
+        # Pygame clock
+        clock = Timer()
+
         while stack != [] and not found:
             # Draw and update the loop iteration counter
             counter += 1
@@ -149,6 +152,9 @@ class PathfindingAlgorithms:
                     if neighbor not in discovered:
                         # Add the neighbor as a key in the path dictionary with vertex as a parent
                         paths[neighbor] = vertex
+
+            clock.update_time()
+            self._draw_timer(clock, surface)
 
         if found is False:
             return []
@@ -274,7 +280,6 @@ class PathfindingAlgorithms:
         text_surface = pygame.font.SysFont('Arial', 20).render(longest_text, True, (0, 0, 0))
         text_h = text_surface.get_height()
         text_w = text_surface.get_width()
-        print(f'{longest_text}: h: {text_h}: w: {text_w}')
         white = pygame.Surface((text_w, text_h))
         white.fill((255, 255, 255))
         return white
