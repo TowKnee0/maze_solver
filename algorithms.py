@@ -8,6 +8,7 @@ CSC111 Final Project by Tony He, Austin Blackman, Ifaz Alam
 import pygame
 from matrix_graph import MatrixGraph
 from typing import Tuple
+from clock import Timer
 
 
 class PathfindingAlgorithms:
@@ -28,18 +29,23 @@ class PathfindingAlgorithms:
 
     iteration_text_background: pygame.Surface
     iteration_text_pos: tuple[int, int]
+    timer_text_pos: tuple[int, int]
+    timer_text_background: pygame.Surface
     maze_x_offset: int
     maze_y_offset: int
 
     def __init__(self, iteration_counter_pos: tuple[int, int], maze_x_offset: int,
-                 maze_y_offset: int) -> None:
+                 maze_y_offset: int, timer_text_pos: tuple[int, int]) -> None:
         """
         Initialize a PathfindingAlgorithms Object
         """
         max_string = f'Current Iteration + {1920 * 1080}'  # Max is the largest number of pixels
+        max_time = f'TIMER: 99:99:99'
         # possible to search
         self.iteration_text_background = self._get_text_surface(max_string)
         self.iteration_text_pos = iteration_counter_pos
+        self.timer_text_pos = timer_text_pos
+        self.timer_text_background = self._get_text_surface(max_time)
         self.maze_x_offset = maze_x_offset
         self.maze_y_offset = maze_y_offset
 
@@ -61,11 +67,13 @@ class PathfindingAlgorithms:
             paths[node] = start
         found = False
 
-        # Variables and Surfaces used to display the current iterations
+        # Counter to store current iteration
         counter = 0
 
-        while queue != [] and not found:
+        # Pygame clock
+        clock = Timer()
 
+        while queue != [] and not found:
             # Draw and update the loop iteration counter
             counter += 1
             iteration_counter = f'Current Iteration: {counter}'
@@ -90,6 +98,9 @@ class PathfindingAlgorithms:
 
                     # Add the node as a key with the current node as the value
                     paths[node] = curr
+
+            clock.update_time()
+            self._draw_timer(clock, surface)
 
         if found is False:
             return []
@@ -251,6 +262,11 @@ class PathfindingAlgorithms:
         surface.blit(self.iteration_text_background, self.iteration_text_pos)
         surface.blit(text_surface, self.iteration_text_pos)
 
+    def _draw_timer(self, clock: Timer, surface: pygame.Surface) -> None:
+        text_surface = clock.get_text_surface()
+        surface.blit(self.timer_text_background, self.timer_text_pos)
+        surface.blit(text_surface, self.timer_text_pos)
+
     def _get_text_surface(self, longest_text: str) -> pygame.Surface:
         """
         Return a white box that is the size of the maximum possible text being rendered
@@ -258,6 +274,8 @@ class PathfindingAlgorithms:
         text_surface = pygame.font.SysFont('Arial', 20).render(longest_text, True, (0, 0, 0))
         text_h = text_surface.get_height()
         text_w = text_surface.get_width()
+        print(f'{longest_text}: h: {text_h}: w: {text_w}')
         white = pygame.Surface((text_w, text_h))
         white.fill((255, 255, 255))
         return white
+

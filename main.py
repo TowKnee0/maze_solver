@@ -72,8 +72,9 @@ start_button = ToggleButton((10, 10, 100, 50), 'Start', (0, 170, 0))
 end_button = ToggleButton((110, 10, 100, 50), 'End', (170, 0, 0))
 restart_button = Button((1000, 10, 100, 50), 'Restart', (255, 0, 0))
 iteration_counter_pos = (210, 10)
+timer_pos = (412, 10)
 
-alg = PathfindingAlgorithms(iteration_counter_pos, centered_w, centered_h)
+alg = PathfindingAlgorithms(iteration_counter_pos, centered_w, centered_h, timer_pos)
 
 # alg.breadth_first_search(graph1, (1212, 709), (393, 432), set(), surf)
 # alg.depth_first_search_iterative(graph1, (1212, 709), (393, 432), surf)
