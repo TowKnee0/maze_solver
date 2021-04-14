@@ -11,17 +11,18 @@ from typing import Tuple
 import pygame
 from matrix_graph import MatrixGraph
 from algorithms import PathfindingAlgorithms
+from drop_down import DropDown
 from button import Button, ToggleButton
 from image_processing import crop_image
 
 # Constants
 GUI_Y_OFFSET = 50  # The offset used for the GUI at the top of the program
-PADDING_Y = round(.10 * 720)
+PADDING_Y = round(.3 * 720)
 PADDING_X = round(.10 * 1280)
 
 pygame.init()
 
-maze = 'maze5.PNG'
+maze = 'maze4.png'
 
 image = cv2.resize(cv2.imread(maze), (1280, 720))
 
@@ -70,9 +71,12 @@ display.blit(surf, (0, 0))
 # Initialize the buttons
 start_button = ToggleButton((10, 10, 100, 50), 'Start', (0, 170, 0))
 end_button = ToggleButton((110, 10, 100, 50), 'End', (170, 0, 0))
-restart_button = Button((1000, 10, 100, 50), 'Restart', (255, 0, 0))
+restart_button = Button((612, 10, 100, 50), 'Restart', (255, 0, 0))
 iteration_counter_pos = (210, 10)
-timer_pos = (412, 10)
+timer_pos = (210, 30) #412
+algo_drop_down = DropDown(['Breadth First Search', 'Depth First Search', 'A*'],
+                          (412, 10, 200, 50), display)
+
 
 alg = PathfindingAlgorithms(iteration_counter_pos, centered_w, centered_h, timer_pos)
 
@@ -91,15 +95,23 @@ while True:
 
     # print(start, end)
     if start is not None and end is not None and once:
-        # print(alg.breadth_first_search(graph1, start, end, set(), surf, display))
-        print(alg.breadth_first_search(graph1, start, end, surf, display))
+        if algo_drop_down.get_first() == 'Breadth First Search':
+            alg.breadth_first_search(graph1, start, end, surf, display)
+        elif algo_drop_down.get_first() == 'Depth First Search':
+            alg.depth_first_search_iterative(graph1, start, end, surf, display)
+        else:
+            ...  # A STAR
         once = False
 
-    # Draw the buttons
+    # Draw the buttons and redraw the background and maze
+    display.fill((255, 255, 255, 0))
+    display.blit(maze_img, (centered_w, centered_h))
     start_button.draw(display)
     end_button.draw(display)
     restart_button.draw(display)
+    algo_drop_down.draw_list()
 
+    # Check pygame events
     events = pygame.event.get()
     for event in events:
         if event.type == pygame.QUIT:
@@ -123,6 +135,11 @@ while True:
                 end_button.active = False
                 display.blit(maze_img, (centered_w, centered_h))
                 surf.fill((255, 255, 255, 0))
+
+    # Update the drop down list
+    drop_down_selected = algo_drop_down.update(events)
+    if drop_down_selected != -1:
+        algo_drop_down.update_list(drop_down_selected)
 
     display.blit(surf, (0, 0))
     pygame.time.wait(1)
