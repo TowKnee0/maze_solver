@@ -62,6 +62,6 @@ class Timer:
             s = f'0{s}'
         if m < 10:
             m = f'0{m}'
-        string = f'TIMER: {m}:{s}:{mi}'
+        string = f'Timer: {m}:{s}:{mi}'
         text_surface = pygame.font.SysFont('Arial', 20).render(string, True, (0, 0, 0))
         return text_surface
