@@ -100,7 +100,7 @@ while True:
         elif algo_drop_down.get_first() == 'Depth First Search':
             alg.depth_first_search_iterative(graph1, start, end, surf, display)
         else:
-            ...  # A STAR
+            alg.a_star(graph1, start, end, surf, display)  # A STAR
         once = False
 
     # Draw the buttons and redraw the background and maze
