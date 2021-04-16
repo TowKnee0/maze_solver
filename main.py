@@ -71,7 +71,7 @@ def initialize_maze(maze_path: str, rectangular: bool = True) -> tuple[
     surface_w = display_surface.get_width()
     surface_h = display_surface.get_height()
     maze_centered_width = ((surface_w - maze_img_w) // 2)
-    maze_centered_height = ((surface_h - maze_img_h) // 2) + GUI_Y_OFFSET
+    maze_centered_height = ((surface_h - maze_img_h) // 2) + 2 * GUI_Y_OFFSET
 
     # Draw the maze at the centered location
     display_surface.blit(maze_surface, (maze_centered_width, maze_centered_height))
@@ -100,13 +100,13 @@ display, surf, graph1, maze_img, \
 # Initialize the GUI. This includes buttons, text boxes, drop down menus, timers, and counters.
 start_button = ToggleButton((10, 10, 100, 50), 'Start', (0, 170, 0))
 end_button = ToggleButton((110, 10, 100, 50), 'End', (170, 0, 0))
-restart_button = Button((620, 10, 100, 50), 'Restart', (255, 0, 0))
+restart_button = Button((720, 10, 100, 50), 'Restart', (255, 0, 0))
 iteration_counter_pos = (210, 10)
 timer_pos = (210, 30)
 algo_drop_down = DropDown(['Breadth First Search', 'Depth First Search', 'A*'],
-                          (420, 10, 200, 50), display)
-maze_drop_down = DropDown(['Maze 1', 'Maze 2', 'Maze 3', 'Other'], (720, 10, 200, 50), display)
-maze_drop_down_text_box = TextBox('', 'Enter File Name', (925, 10, 150, 50), display)
+                          (520, 10, 200, 50), display)
+maze_drop_down = DropDown(['Maze 1', 'Maze 2', 'Maze 3', 'Other'], (820, 10, 200, 50), display)
+maze_drop_down_text_box = TextBox('', 'Enter File Name', (1025, 10, 150, 50), display)
 draw_text_box = False
 
 # Initialize the algorithm object
