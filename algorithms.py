@@ -27,7 +27,7 @@ class PathfindingAlgorithms:
         - _maze_y_offset: An integer that represents how much the drawing of the maze needs to be
                          shifted in the y direction inorder to account for the maze being centered
     Sample Usage:
-    >>> algorithms = PathfindingAlgorithms((200, 200))
+    >>> algorithms = PathfindingAlgorithms((200, 200), 5, 5, (500, 500))
     """
 
     _iteration_text_background: pygame.Surface
@@ -160,9 +160,9 @@ class PathfindingAlgorithms:
                 discovered.add(vertex)
                 neighbors = graph.get_valid_neighbours(vertex[0], vertex[1])
                 for neighbor in neighbors:
-                    stack.append(neighbor)
                     if neighbor not in discovered:
                         # Add the neighbor as a key in the path dictionary with vertex as a parent
+                        stack.append(neighbor)
                         paths[neighbor] = vertex
 
             clock.update_time()

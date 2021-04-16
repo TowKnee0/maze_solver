@@ -35,11 +35,11 @@ def crop_image(image: np.ndarray) -> np.ndarray:
 
     # take the smallest coordinates for the top left corner of rect
     # and largest for the bottom right corner
-    min_x0, min_y0, max_x0, max_y0 = rects[0][0], rects[0][1],\
-                                     rects[0][0] + rects[0][2],\
+    min_x0, min_y0, max_x0, max_y0 = rects[0][0], rects[0][1], \
+                                     rects[0][0] + rects[0][2], \
                                      rects[0][1] + rects[0][3]
-    min_x1, min_y1, max_x1, max_y1 = rects[1][0], rects[1][1],\
-                                     rects[1][0] + rects[1][2],\
+    min_x1, min_y1, max_x1, max_y1 = rects[1][0], rects[1][1], \
+                                     rects[1][0] + rects[1][2], \
                                      rects[1][1] + rects[1][3]
     min_x = min(min_x0, min_x1) + 1
     min_y = min(min_y0, min_y1) + 1

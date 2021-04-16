@@ -19,7 +19,11 @@ class Button:
         - _text: A string that stores the text of the button
         - _color: A tuple that stores the color the button in RGB (r,g,b)
         - _text_pos: A tuple that stores the location of the text location
+
+    Sample Usage:
+    >>> my_button = Button((200, 50, 5, 5), 'button', (255, 0 , 0))
     """
+
     _rect: tuple
     _text: str
     _color: tuple

@@ -18,6 +18,8 @@ class Timer:
         - _seconds: An integer that represents how many seconds have passed
         - _minutes: An integer that represents how many minutes have passed
 
+    Sample Usage:
+    >>> my_clock = Timer()
     """
 
     _clock: pygame.time.Clock

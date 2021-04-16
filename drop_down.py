@@ -5,7 +5,7 @@ Contains the DownDown class that generates a drop down menu for the program
 CSC111 Final Project by Tony He, Austin Blackman, Ifaz Alam
 """
 
-from typing import Any
+from typing import Any, Union
 import pygame
 
 
@@ -20,11 +20,15 @@ class DropDown:
         - _hovered: Bool representing if the first entry of the list has been hovered over
         - _items: A list of items representing what is in the drop down list
         - _rectangle: The (x, y, w, h) of the background rectangle
+
+    Sample Usage:
+    >>> my_drop_down = DropDown(['item1', 'item2',], (200, 200, 5, 5), pygame.Surface((1280, 720)))
     """
+
     _active: tuple[int, int, int] = (70, 158, 236)  # RGB: Baby Blue
     _not_active: tuple[int, int, int] = (182, 188, 192)  # RGB: Grey
     _dropped: bool = False
-    _hovered: bool = False
+    _hovered: Union[int, bool] = False
     _surface: pygame.Surface
     _items: list[Any]
     _rectangle: tuple[int, int, int, int]

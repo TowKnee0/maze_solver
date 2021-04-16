@@ -21,6 +21,9 @@ class TextBox:
         - _colour: A tuple representing the colour of the textbox when it is not clicked
         - _clicked_colour: A tuple representing the colour of the textbox when it is clicked
         - _surface: A pygame surface that the textbox is drawn on
+
+    Sample Usage:
+    >>> my_text_box = TextBox('', 'Type Here', (200, 200, 5, 5), pygame.Surface((1280, 720)))
     """
     _text: str
     _default_text: str
