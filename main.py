@@ -94,11 +94,13 @@ def initialize_maze(maze_path: str, rectangular: bool = True) -> tuple[
 
     image = cv2.resize(cv2.imread(maze), (1280, 720))
 
+    # crop only works for rectangular mazes
     if rectangular:
         cropped = crop_image(image)
     else:
         cropped = image
 
+    # Global thresholding using Otsu's binarization
     retVal, thresh = cv2.threshold(cv2.cvtColor(cropped, cv2.COLOR_RGB2GRAY), 0, 255,
                                    cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
@@ -112,9 +114,6 @@ def initialize_maze(maze_path: str, rectangular: bool = True) -> tuple[
         graph = MatrixGraph(np.swapaxes(temp, 0, 1))
     else:
         graph = MatrixGraph(np.swapaxes(thinned, 0, 1))
-
-    # cv2.imshow('t', temp * 255)
-    # cv2.waitKey(0)
 
     pygame.init()
     display_surface = pygame.display.set_mode((1280 + PADDING_X, 720 + GUI_Y_OFFSET + PADDING_Y))
@@ -276,7 +275,7 @@ while True:
                 alg.update_off_set_values(centered_w, centered_h)
             except Exception:  # Exception is broad here because Cv2 does not give good error
                 print('Path does not exist')  # messages, however the error is caused by the path
-                # location not existing
+                # location not close enough
 
     # Pygame
     display.blit(surf, (0, 0))
