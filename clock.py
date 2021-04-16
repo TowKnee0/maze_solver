@@ -65,3 +65,15 @@ class Timer:
         string = f'Timer: {m}:{s}:{mi}'
         text_surface = pygame.font.SysFont('Arial', 20).render(string, True, (0, 0, 0))
         return text_surface
+
+
+if __name__ == '__main__':
+    import python_ta
+    import python_ta.contracts
+    python_ta.contracts.check_all_contracts()
+    python_ta.check_all(config={
+        'extra-imports': ['pygame'],
+        'allowed-io': [],  # the names (strs) of functions that call print/open/input
+        'max-line-length': 100,
+        'disable': ['E1136']
+    })

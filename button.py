@@ -5,8 +5,8 @@ Contains two button methods used with pygame.
 CSC111 Final Project by Tony He, Austin Blackman, Ifaz Alam
 """
 
+from typing import Union
 import pygame
-from typing import Tuple
 from matrix_graph import MatrixGraph
 
 
@@ -26,7 +26,8 @@ class Button:
     _text_surface: pygame.Surface
     _text_pos: tuple
 
-    def __init__(self, rect: tuple[int, int, int, int], text: str, color: tuple[int, int, int]):
+    def __init__(self, rect: tuple[int, int, int, int], text: str, color: tuple[int, int, int]) \
+            -> None:
         """
         Initialize a new button
         """
@@ -81,7 +82,8 @@ class ToggleButton(Button):
 
     active: bool
 
-    def __init__(self, rect: Tuple[int, int, int, int], text: str, color: Tuple[int, int, int]):
+    def __init__(self, rect: tuple[int, int, int, int], text: str, color: tuple[int, int, int]) \
+            -> None:
         """
         Initialize a new toggle button
         """
@@ -109,7 +111,7 @@ class ToggleButton(Button):
         pygame.draw.rect(display, color, self._rect)
         display.blit(self._text_surface, self._text_pos)
 
-    def set_pos(self, graph: MatrixGraph, posx, posy):
+    def set_pos(self, graph: MatrixGraph, posx: int, posy: int) -> Union[None, tuple[int, int]]:
         """
         Set the position of the button to be the closest on the path. If the point is too far
         print an error message
@@ -117,6 +119,20 @@ class ToggleButton(Button):
         if self.active:
             try:
                 return graph.closest_path((posx, posy), 5)
-            except Exception:
+            except IndexError:
                 print('Select point closer to path')
                 return None
+        else:
+            return None
+
+
+if __name__ == '__main__':
+    import python_ta
+    import python_ta.contracts
+    python_ta.contracts.check_all_contracts()
+    python_ta.check_all(config={
+        'extra-imports': ['pygame', 'matrix_graph'],
+        'allowed-io': ['set_pos'],  # the names (strs) of functions that call print/open/input
+        'max-line-length': 100,
+        'disable': ['E1136']
+    })

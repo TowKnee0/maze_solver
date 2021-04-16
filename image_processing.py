@@ -42,3 +42,15 @@ def crop_image(image: np.ndarray) -> np.ndarray:
 
     cropped_img = image[min_y: max_y, min_x: max_x]
     return cropped_img
+
+
+if __name__ == '__main__':
+    import python_ta
+    import python_ta.contracts
+    python_ta.contracts.check_all_contracts()
+    python_ta.check_all(config={
+        'extra-imports': ['cv2', 'numpy'],
+        'allowed-io': [],  # the names (strs) of functions that call print/open/input
+        'max-line-length': 100,
+        'disable': ['E1136']
+    })

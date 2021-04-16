@@ -4,6 +4,7 @@ Contains the class allows user input via the keyboard.
 
 CSC111 Final Project by Tony He, Austin Blackman, Ifaz Alam
 """
+from typing import Union
 import pygame
 
 
@@ -64,7 +65,7 @@ class TextBox:
 
         self._surface.blit(text_surface, text_surface.get_rect(center=self._background.center))
 
-    def update(self, events: list) -> str:
+    def update(self, events: list) -> Union[None, str]:
         """
         Return the value of the string inputted into the text box, and update the object
 
@@ -91,4 +92,16 @@ class TextBox:
                 else:
                     self._text += event.unicode
 
-        return 'IGNORE'
+        return None
+
+
+if __name__ == '__main__':
+    import python_ta
+    import python_ta.contracts
+    python_ta.contracts.check_all_contracts()
+    python_ta.check_all(config={
+        'extra-imports': ['pygame', 'typing'],
+        'allowed-io': [],  # the names (strs) of functions that call print/open/input
+        'max-line-length': 100,
+        'disable': ['E1136']
+    })

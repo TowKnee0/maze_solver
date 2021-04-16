@@ -5,10 +5,9 @@ Contains the MatrixGraph class which is used to store pixel connections
 CSC111 Final Project by Tony He, Austin Blackman, Ifaz Alam
 """
 
+import math
 import numba
 import numpy as np
-import math
-from typing import Tuple
 
 # Numba requirements
 spec = [
@@ -19,7 +18,7 @@ spec = [
 
 
 @numba.experimental.jitclass(spec)
-class MatrixGraph(object):
+class MatrixGraph:
     """This class will take care of all graph operations. Each node is a pixel of
     the graph with a value of either 0 or 1. Edges are implicitly stored as the
     8 nodes (pixels) around each node.
@@ -38,7 +37,7 @@ class MatrixGraph(object):
         self.graph = matrix
         self.cols, self.rows = matrix.shape
 
-    def get_valid_neighbours(self, col, row) -> list[tuple]:
+    def get_valid_neighbours(self, col: int, row: int) -> list[tuple]:
         """Not elegant but fast(enough for now)
         Return a list of pixels that are adjacent to (col, row)
 
@@ -94,3 +93,15 @@ class MatrixGraph(object):
                 index = i
 
         return temp[index]
+
+
+if __name__ == '__main__':
+    import python_ta
+    import python_ta.contracts
+    python_ta.contracts.check_all_contracts()
+    python_ta.check_all(config={
+        'extra-imports': ['numba', 'numpy', 'math'],
+        'allowed-io': [],  # the names (strs) of functions that call print/open/input
+        'max-line-length': 100,
+        'disable': ['E1136']
+    })

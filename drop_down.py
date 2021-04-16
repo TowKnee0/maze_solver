@@ -4,8 +4,9 @@ Contains the DownDown class that generates a drop down menu for the program
 
 CSC111 Final Project by Tony He, Austin Blackman, Ifaz Alam
 """
-import pygame
+
 from typing import Any
+import pygame
 
 
 class DropDown:
@@ -20,13 +21,13 @@ class DropDown:
         - _items: A list of items representing what is in the drop down list
         - _rectangle: The (x, y, w, h) of the background rectangle
     """
-    _active = (70, 158, 236)  # RGB: Baby Blue
-    _not_active = (182, 188, 192)  # RGB: Grey
+    _active: tuple[int, int, int] = (70, 158, 236)  # RGB: Baby Blue
+    _not_active: tuple[int, int, int] = (182, 188, 192)  # RGB: Grey
+    _dropped: bool = False
+    _hovered: bool = False
     _surface: pygame.Surface
-    _dropped = False
-    _hovered = False
     _items: list[Any]
-    _rectangle = tuple[int, int, int, int]
+    _rectangle: tuple[int, int, int, int]
 
     def __init__(self, items: list[Any], rectangle: tuple[int, int, int, int],
                  surface: pygame.Surface) -> None:
@@ -109,3 +110,15 @@ class DropDown:
         Return the first item in the item list
         """
         return self._items[0]
+
+
+if __name__ == '__main__':
+    import python_ta
+    import python_ta.contracts
+    python_ta.contracts.check_all_contracts()
+    python_ta.check_all(config={
+        'extra-imports': ['pygame', 'typing'],
+        'allowed-io': [],  # the names (strs) of functions that call print/open/input
+        'max-line-length': 100,
+        'disable': ['E1136']
+    })

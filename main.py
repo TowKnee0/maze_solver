@@ -187,7 +187,6 @@ while True:
     if draw_text_box:
         maze_drop_down_text_box.draw_text_box()
 
-
     # Check pygame events
     events = pygame.event.get()
     for event in events:
@@ -250,7 +249,7 @@ while True:
     if draw_text_box:
         # Update and get the returned text
         returned_text = maze_drop_down_text_box.update(events)
-        if returned_text != 'IGNORE':
+        if returned_text is not None:
             try:
                 # If there is a valid input, switch to that maze
                 display, surf, graph1, maze_img, \

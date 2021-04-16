@@ -5,11 +5,10 @@ Contains the PathfindingAlgorithms class which contains various path finding fun
 CSC111 Final Project by Tony He, Austin Blackman, Ifaz Alam
 """
 
+from queue import PriorityQueue
 import pygame
 from matrix_graph import MatrixGraph
-from typing import Tuple
 from clock import Timer
-from queue import PriorityQueue
 
 
 class PathfindingAlgorithms:
@@ -45,18 +44,19 @@ class PathfindingAlgorithms:
         """
         # Max variables are used to generate the largest background
         max_string = f'Nodes Searched + {1920 * 1080}'
-        max_time = f'Timer: 99:99:99'
+        max_time = 'Timer: 99:99:99'
 
         # Assign instance attributes
-        self._iteration_text_background = self._get_text_surface(max_string)
+        self._iteration_text_background = _get_text_surface(max_string)
         self._iteration_text_pos = iteration_counter_pos
         self._timer_text_pos = timer_text_pos
-        self._timer_text_background = self._get_text_surface(max_time)
+        self._timer_text_background = _get_text_surface(max_time)
         self._maze_x_offset = maze_x_offset
         self._maze_y_offset = maze_y_offset
 
     def breadth_first_search(self, graph: MatrixGraph, start: tuple, target: tuple,
-                             surface, display) -> list[tuple[int, int]]:
+                             surface: pygame.Surface, display: pygame.Surface) \
+            -> list[tuple[int, int]]:
         """
         Return a list of tuples representing the final path if target is found,
         return an empty list otherwise.
@@ -116,7 +116,8 @@ class PathfindingAlgorithms:
             return self._find_and_draw_final_path(paths, start, target, surface, display)
 
     def depth_first_search_iterative(self, graph: MatrixGraph, start: tuple, target: tuple,
-                                     surface, display) -> list[tuple[int, int]]:
+                                     surface: pygame.Surface, display: pygame.Surface) \
+            -> list[tuple[int, int]]:
         """
         Return a list of tuples representing the final path if target is found,
         return an empty list otherwise.
@@ -173,15 +174,15 @@ class PathfindingAlgorithms:
             return self._find_and_draw_final_path(paths, start, target, surface, display)
 
     def a_star(self, graph: MatrixGraph, start: tuple, target: tuple,
-               surface, display) -> list[tuple[int, int]]:
+               surface: pygame.Surface, display: pygame.Surface) -> list[tuple[int, int]]:
         """
         The heuristic used is the distance from target to the current node
         if f(n) = 0 we have reached our node, our promising choice is the min(f(n)) for each
         neighbour
         """
 
-        open = PriorityQueue()
-        open.put((graph.euclidean_distance(start, target), (start, 0)))
+        open_queue = PriorityQueue()
+        open_queue.put((graph.euclidean_distance(start, target), (start, 0)))
 
         closed = {start}
 
@@ -193,13 +194,13 @@ class PathfindingAlgorithms:
         # Pygame clock
         clock = Timer()
 
-        while not open.empty() and not found:
+        while not open_queue.empty() and not found:
             # Draw and update iteration counter
             counter += 1
             iteration_counter = f'Nodes Searched: {counter}'
             self._draw_loop_iterations(iteration_counter, surface)
 
-            curr = open.get()
+            curr = open_queue.get()
             closed.add(curr[1][0])
 
             _ = pygame.event.get()  # Call event.get to stop program from crashing on clicks
@@ -218,12 +219,12 @@ class PathfindingAlgorithms:
                 if coord in closed:
                     # If the neighbor has already been computed, do nothing
                     continue
-                if not any(tup[1][0] == coord for tup in open.queue):
+                if not any(tup[1][0] == coord for tup in open_queue.queue):
                     # If the neighbor is not in the the open queue, add it
 
                     # Compute the huristic and add it to open
                     neighbour_f = curr[1][1] + 1 + graph.euclidean_distance(target, coord)
-                    open.put((neighbour_f, (coord, curr[1][1] + 1)))
+                    open_queue.put((neighbour_f, (coord, curr[1][1] + 1)))
 
                     # Track the path
                     paths[coord] = curr[1][0]
@@ -245,8 +246,8 @@ class PathfindingAlgorithms:
         self._maze_y_offset = centered_h
 
     def _find_and_draw_final_path(self, paths: dict[tuple[int, int], tuple[int, int]],
-                                  start: tuple, target: tuple, surface, display) -> \
-            list[tuple[int, int]]:
+                                  start: tuple, target: tuple, surface: pygame.Surface,
+                                  display: pygame.Surface) -> list[tuple[int, int]]:
         """
         Return a list of tuples that corresponds to the path found by the algorithm that calls
         this function
@@ -285,13 +286,26 @@ class PathfindingAlgorithms:
         surface.blit(self._timer_text_background, self._timer_text_pos)
         surface.blit(text_surface, self._timer_text_pos)
 
-    def _get_text_surface(self, longest_text: str) -> pygame.Surface:
-        """
-        Return a white box that is the size of the maximum possible text being rendered
-        """
-        text_surface = pygame.font.SysFont('Arial', 20).render(longest_text, True, (0, 0, 0))
-        text_h = text_surface.get_height()
-        text_w = text_surface.get_width()
-        white = pygame.Surface((text_w, text_h))
-        white.fill((255, 255, 255))
-        return white
+
+def _get_text_surface(longest_text: str) -> pygame.Surface:
+    """
+    Return a white box that is the size of the maximum possible text being rendered
+    """
+    text_surface = pygame.font.SysFont('Arial', 20).render(longest_text, True, (0, 0, 0))
+    text_h = text_surface.get_height()
+    text_w = text_surface.get_width()
+    white = pygame.Surface((text_w, text_h))
+    white.fill((255, 255, 255))
+    return white
+
+
+if __name__ == '__main__':
+    import python_ta
+    import python_ta.contracts
+    python_ta.contracts.check_all_contracts()
+    python_ta.check_all(config={
+        'extra-imports': ['pygame', 'matrix_graph', 'typing', 'clock', 'queue'],
+        'allowed-io': [],  # the names (strs) of functions that call print/open/input
+        'max-line-length': 100,
+        'disable': ['E1136']
+    })
