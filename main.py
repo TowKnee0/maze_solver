@@ -207,9 +207,7 @@ while True:
                 # If there is a valid input, switch to that maze.
 
                 # If the maze is circular, do not run the crop.
-                print(returned_text)
                 if returned_text[6] == 'c':
-                    print('true')
                     display, surf, graph1, maze_img, \
                         centered_w, centered_h, start, end, once = initialize_maze(returned_text,
                                                                                    False)
