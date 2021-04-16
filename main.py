@@ -74,8 +74,11 @@ PADDING_X = round(.10 * 1280)
 
 # ___________________________________________
 
-def initialize_maze(maze_path: str) -> tuple[pygame.Surface, pygame.Surface, MatrixGraph,
-                                             pygame.Surface, int, int, None, None, bool]:
+def initialize_maze(maze_path: str, rectangular: bool = True) -> tuple[
+                                                                    pygame.Surface, pygame.Surface,
+                                                                    MatrixGraph, pygame.Surface,
+                                                                    int, int, None, None, bool]:
+
     """
     Initialize the program variables with respect to the maze found at maze_path.
 
@@ -91,7 +94,10 @@ def initialize_maze(maze_path: str) -> tuple[pygame.Surface, pygame.Surface, Mat
 
     image = cv2.resize(cv2.imread(maze), (1280, 720))
 
-    cropped = crop_image(image)
+    if rectangular:
+        cropped = crop_image(image)
+    else:
+        cropped = image
 
     retVal, thresh = cv2.threshold(cv2.cvtColor(cropped, cv2.COLOR_RGB2GRAY), 0, 255,
                                    cv2.THRESH_BINARY + cv2.THRESH_OTSU)
@@ -100,10 +106,12 @@ def initialize_maze(maze_path: str) -> tuple[pygame.Surface, pygame.Surface, Mat
 
     # cut borders
 
-    # temp = np.delete(thinned, [0, thinned.shape[1] - 1], axis=1)
-    # temp = np.delete(thinned, [0, thinned.shape[0] - 1], axis=0)
-
-    graph = MatrixGraph(np.swapaxes(thinned, 0, 1))
+    if not rectangular:
+        temp = np.delete(thinned, [0, thinned.shape[1] - 1], axis=1)
+        temp = np.delete(thinned, [0, thinned.shape[0] - 1], axis=0)
+        graph = MatrixGraph(np.swapaxes(temp, 0, 1))
+    else:
+        graph = MatrixGraph(np.swapaxes(thinned, 0, 1))
 
     # cv2.imshow('t', temp * 255)
     # cv2.waitKey(0)
@@ -126,7 +134,8 @@ def initialize_maze(maze_path: str) -> tuple[pygame.Surface, pygame.Surface, Mat
     display_surface.blit(maze_surface, (maze_centered_width, maze_centered_height))
 
     # surf = pygame.surfarray.make_surface(graph1.graph * 255)
-    surface = pygame.Surface((1280 + PADDING_X, 720 + GUI_Y_OFFSET + PADDING_Y), pygame.SRCALPHA, 32)
+    surface = pygame.Surface((1280 + PADDING_X, 720 + GUI_Y_OFFSET + PADDING_Y), pygame.SRCALPHA,
+                             32)
     surface = surface.convert_alpha()
 
     display_surface.blit(surface, (0, 0))
@@ -135,13 +144,14 @@ def initialize_maze(maze_path: str) -> tuple[pygame.Surface, pygame.Surface, Mat
     end_vertex = None
     run_once = True
 
-    return (display_surface, surface, graph, maze_surface, maze_centered_width, maze_centered_height,
-            start_vertex, end_vertex, run_once)
+    return (
+        display_surface, surface, graph, maze_surface, maze_centered_width, maze_centered_height,
+        start_vertex, end_vertex, run_once)
 
 
 # Initialize variables from the initialize_maze call with the specified maze
 display, surf, graph1, maze_img, \
-    centered_w, centered_h, start, end, once = initialize_maze('mazes/maze4.png')
+    centered_w, centered_h, start, end, once = initialize_maze('mazes/maze.png')
 
 # Initialize the GUI. This includes buttons, text boxes, drop down menus, timers, and counters.
 start_button = ToggleButton((10, 10, 100, 50), 'Start', (0, 170, 0))
@@ -226,19 +236,19 @@ while True:
         if maze_drop_down.get_first() == 'Maze 1':
             # Reassign variables with respect to the new maze
             display, surf, graph1, maze_img, \
-                centered_w, centered_h, start, end, once = initialize_maze('mazes/maze4.png')
+                centered_w, centered_h, start, end, once = initialize_maze('mazes/maze.png')
             alg.update_off_set_values(centered_w, centered_h)
             draw_text_box = False
         elif maze_drop_down.get_first() == 'Maze 2':
             # Reassign variables with respect to the new maze
             display, surf, graph1, maze_img, \
-                centered_w, centered_h, start, end, once = initialize_maze('mazes/maze3.jpg')
+                centered_w, centered_h, start, end, once = initialize_maze('mazes/maze2.jpg')
             alg.update_off_set_values(centered_w, centered_h)
             draw_text_box = False
         elif maze_drop_down.get_first() == 'Maze 3':
             # Reassign variables with respect to the new maze
             display, surf, graph1, maze_img, \
-                centered_w, centered_h, start, end, once = initialize_maze('mazes/maze.png')
+                centered_w, centered_h, start, end, once = initialize_maze('mazes/maze3.png')
             alg.update_off_set_values(centered_w, centered_h)
             draw_text_box = False
         elif maze_drop_down.get_first() == 'Other':
@@ -251,13 +261,22 @@ while True:
         returned_text = maze_drop_down_text_box.update(events)
         if returned_text is not None:
             try:
-                # If there is a valid input, switch to that maze
-                display, surf, graph1, maze_img, \
-                    centered_w, centered_h, start, end, once = initialize_maze(returned_text)
+                # If there is a valid input, switch to that maze.
+
+                # If the maze is circular, do not run the crop.
+                print(returned_text)
+                if returned_text[6] == 'c':
+                    print('true')
+                    display, surf, graph1, maze_img, \
+                        centered_w, centered_h, start, end, once = initialize_maze(returned_text,
+                                                                               False)
+                else:
+                    display, surf, graph1, maze_img, \
+                        centered_w, centered_h, start, end, once = initialize_maze(returned_text)
                 alg.update_off_set_values(centered_w, centered_h)
             except Exception:  # Exception is broad here because Cv2 does not give good error
                 print('Path does not exist')  # messages, however the error is caused by the path
-                                              # location not existing
+                # location not existing
 
     # Pygame
     display.blit(surf, (0, 0))
