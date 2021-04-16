@@ -22,58 +22,6 @@ PADDING_Y = round(.3 * 720)
 PADDING_X = round(.10 * 1280)
 
 
-# LEGACY CODE I DO NOT WANT TO DELETE YET IN CASE I MESSED SOMETHING UP
-# ___________________________________________
-
-# pygame.init()
-#
-# maze = 'maze3.jpg'
-#
-# image = cv2.resize(cv2.imread(maze), (1280, 720))
-#
-# cropped = crop_image(image)
-#
-# retVal, thresh = cv2.threshold(cv2.cvtColor(cropped, cv2.COLOR_RGB2GRAY), 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-#
-#
-# thinned = np.array(cv2.ximgproc.thinning(thresh)) // 255
-#
-# # cut borders
-#
-# # temp = np.delete(thinned, [0, thinned.shape[1] - 1], axis=1)
-# # temp = np.delete(thinned, [0, thinned.shape[0] - 1], axis=0)
-#
-#
-# graph1 = MatrixGraph(np.swapaxes(thinned, 0, 1))
-#
-# # cv2.imshow('t', temp * 255)
-# # cv2.waitKey(0)
-#
-# pygame.init()
-# display = pygame.display.set_mode((1280 + PADDING_X, 720 + GUI_Y_OFFSET + PADDING_Y))
-# # maze_img = pygame.transform.scale(pygame.image.load(cropped), (1280, 720))
-# maze_img = pygame.surfarray.make_surface(np.swapaxes(cropped, 0, 1))
-#
-# # Center the maze image
-# maze_img_w = maze_img.get_width()
-# maze_img_h = maze_img.get_height()
-#
-# surface_w = display.get_width()
-# surface_h = display.get_height()
-#
-# centered_w = ((surface_w - maze_img_w) // 2)
-# centered_h = ((surface_h - maze_img_h) // 2) + GUI_Y_OFFSET
-#
-# display.blit(maze_img, (centered_w, centered_h))
-#
-# # surf = pygame.surfarray.make_surface(graph1.graph * 255)
-# surf = pygame.Surface((1280 + PADDING_X, 720 + GUI_Y_OFFSET + PADDING_Y), pygame.SRCALPHA, 32)
-# surf = surf.convert_alpha()
-#
-# display.blit(surf, (0, 0))
-
-# ___________________________________________
-
 def initialize_maze(maze_path: str, rectangular: bool = True) -> tuple[
                                                                     pygame.Surface, pygame.Surface,
                                                                     MatrixGraph, pygame.Surface,
@@ -88,10 +36,9 @@ def initialize_maze(maze_path: str, rectangular: bool = True) -> tuple[
     value representing the end of the maze, and a bool representing if we can run the program once)
     """
 
+    # Initialize pygame and the read the maze image
     pygame.init()
-
     maze = maze_path
-
     image = cv2.resize(cv2.imread(maze), (1280, 720))
 
     # crop only works for rectangular mazes
@@ -107,7 +54,6 @@ def initialize_maze(maze_path: str, rectangular: bool = True) -> tuple[
     thinned = np.array(cv2.ximgproc.thinning(thresh)) // 255
 
     # cut borders
-
     if not rectangular:
         temp = np.delete(thinned, [0, thinned.shape[1] - 1], axis=1)
         temp = np.delete(thinned, [0, thinned.shape[0] - 1], axis=0)
@@ -115,30 +61,29 @@ def initialize_maze(maze_path: str, rectangular: bool = True) -> tuple[
     else:
         graph = MatrixGraph(np.swapaxes(thinned, 0, 1))
 
-    pygame.init()
+    # Create pygame surfaces for the display, and the maze
     display_surface = pygame.display.set_mode((1280 + PADDING_X, 720 + GUI_Y_OFFSET + PADDING_Y))
-    # maze_img = pygame.transform.scale(pygame.image.load(cropped), (1280, 720))
     maze_surface = pygame.surfarray.make_surface(np.swapaxes(cropped, 0, 1))
 
     # Center the maze image
     maze_img_w = maze_surface.get_width()
     maze_img_h = maze_surface.get_height()
-
     surface_w = display_surface.get_width()
     surface_h = display_surface.get_height()
-
     maze_centered_width = ((surface_w - maze_img_w) // 2)
     maze_centered_height = ((surface_h - maze_img_h) // 2) + GUI_Y_OFFSET
 
+    # Draw the maze at the centered location
     display_surface.blit(maze_surface, (maze_centered_width, maze_centered_height))
 
-    # surf = pygame.surfarray.make_surface(graph1.graph * 255)
+    # Create the surface to draw the pathing on
     surface = pygame.Surface((1280 + PADDING_X, 720 + GUI_Y_OFFSET + PADDING_Y), pygame.SRCALPHA,
                              32)
     surface = surface.convert_alpha()
 
     display_surface.blit(surface, (0, 0))
 
+    # Initialize starting variables
     start_vertex = None
     end_vertex = None
     run_once = True
@@ -157,7 +102,7 @@ start_button = ToggleButton((10, 10, 100, 50), 'Start', (0, 170, 0))
 end_button = ToggleButton((110, 10, 100, 50), 'End', (170, 0, 0))
 restart_button = Button((620, 10, 100, 50), 'Restart', (255, 0, 0))
 iteration_counter_pos = (210, 10)
-timer_pos = (210, 30)  # 412
+timer_pos = (210, 30)
 algo_drop_down = DropDown(['Breadth First Search', 'Depth First Search', 'A*'],
                           (420, 10, 200, 50), display)
 maze_drop_down = DropDown(['Maze 1', 'Maze 2', 'Maze 3', 'Other'], (720, 10, 200, 50), display)
@@ -167,15 +112,14 @@ draw_text_box = False
 # Initialize the algorithm object
 alg = PathfindingAlgorithms(iteration_counter_pos, centered_w, centered_h, timer_pos)
 
-# alg.breadth_first_search(graph1, (1212, 709), (393, 432), set(), surf)
-# alg.depth_first_search_iterative(graph1, (1212, 709), (393, 432), surf)
-
 while True:
+    # Draw the start and end points
     if start is not None:
         pygame.draw.circle(surf, (0, 255, 0), (start[0] + centered_w, start[1] + centered_h), 3)
     if end is not None:
         pygame.draw.circle(surf, (255, 0, 0), (end[0] + centered_w, end[1] + centered_h), 3)
 
+    # If the start and end are selected, run the program
     if start is not None and end is not None and once:
         if algo_drop_down.get_first() == 'Breadth First Search':
             alg.breadth_first_search(graph1, start, end, surf, display)
@@ -268,7 +212,7 @@ while True:
                     print('true')
                     display, surf, graph1, maze_img, \
                         centered_w, centered_h, start, end, once = initialize_maze(returned_text,
-                                                                               False)
+                                                                                   False)
                 else:
                     display, surf, graph1, maze_img, \
                         centered_w, centered_h, start, end, once = initialize_maze(returned_text)
