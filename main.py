@@ -103,7 +103,7 @@ def initialize_maze(maze_path: str) -> tuple[pygame.Surface, pygame.Surface, Mat
     # temp = np.delete(thinned, [0, thinned.shape[1] - 1], axis=1)
     # temp = np.delete(thinned, [0, thinned.shape[0] - 1], axis=0)
 
-    graph1 = MatrixGraph(np.swapaxes(thinned, 0, 1))
+    graph = MatrixGraph(np.swapaxes(thinned, 0, 1))
 
     # cv2.imshow('t', temp * 255)
     # cv2.waitKey(0)
@@ -135,7 +135,7 @@ def initialize_maze(maze_path: str) -> tuple[pygame.Surface, pygame.Surface, Mat
     end = None
     once = True
 
-    return (display, surf, graph1, maze_img, centered_w, centered_h, start, end, once)
+    return (display, surf, graph, maze_img, centered_w, centered_h, start, end, once)
 
 
 # Initialize variables from the initialize_maze call with the specified maze
@@ -151,7 +151,7 @@ timer_pos = (210, 30)  # 412
 algo_drop_down = DropDown(['Breadth First Search', 'Depth First Search', 'A*'],
                           (420, 10, 200, 50), display)
 maze_drop_down = DropDown(['Maze 1', 'Maze 2', 'Maze 3', 'Other'], (720, 10, 200, 50), display)
-maze_drop_down_text_box = TextBox('', 'Enter Maze Path', (925, 10, 150, 50), display)
+maze_drop_down_text_box = TextBox('', 'Enter File Name', (925, 10, 150, 50), display)
 draw_text_box = False
 
 # Initialize the algorithm object
