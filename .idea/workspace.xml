@@ -21,15 +21,7 @@
   <component name="ChangeListManager">
     <list default="true" id="fb9bd826-9a6d-41e5-98d1-765aad673153" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/algorithms.py" beforeDir="false" afterPath="$PROJECT_DIR$/algorithms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/button.py" beforeDir="false" afterPath="$PROJECT_DIR$/button.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clock.py" beforeDir="false" afterPath="$PROJECT_DIR$/clock.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drop_down.py" beforeDir="false" afterPath="$PROJECT_DIR$/drop_down.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/image_processing.py" beforeDir="false" afterPath="$PROJECT_DIR$/image_processing.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/matrix_graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/matrix_graph.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/text_box.py" beforeDir="false" afterPath="$PROJECT_DIR$/text_box.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,7 +71,7 @@
       <recent name="C:\GitHub\maze_solver" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.text_box">
+  <component name="RunManager" selected="Python.main">
     <configuration name="clock" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="maze_solver" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -177,11 +169,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.main" />
         <item itemvalue="Python.text_box" />
         <item itemvalue="Python.main" />
         <item itemvalue="Python.image_processing" />
         <item itemvalue="Python.main" />
-        <item itemvalue="Python.drop_down" />
       </list>
     </recent_temporary>
   </component>
@@ -206,7 +198,7 @@
       <workItem from="1618348670208" duration="11000" />
       <workItem from="1618356675281" duration="8638000" />
       <workItem from="1618516434333" duration="10326000" />
-      <workItem from="1618537034490" duration="7784000" />
+      <workItem from="1618537034490" duration="8492000" />
     </task>
     <servers />
   </component>

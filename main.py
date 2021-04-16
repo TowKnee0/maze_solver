@@ -109,40 +109,41 @@ def initialize_maze(maze_path: str) -> tuple[pygame.Surface, pygame.Surface, Mat
     # cv2.waitKey(0)
 
     pygame.init()
-    display = pygame.display.set_mode((1280 + PADDING_X, 720 + GUI_Y_OFFSET + PADDING_Y))
+    display_surface = pygame.display.set_mode((1280 + PADDING_X, 720 + GUI_Y_OFFSET + PADDING_Y))
     # maze_img = pygame.transform.scale(pygame.image.load(cropped), (1280, 720))
-    maze_img = pygame.surfarray.make_surface(np.swapaxes(cropped, 0, 1))
+    maze_surface = pygame.surfarray.make_surface(np.swapaxes(cropped, 0, 1))
 
     # Center the maze image
-    maze_img_w = maze_img.get_width()
-    maze_img_h = maze_img.get_height()
+    maze_img_w = maze_surface.get_width()
+    maze_img_h = maze_surface.get_height()
 
-    surface_w = display.get_width()
-    surface_h = display.get_height()
+    surface_w = display_surface.get_width()
+    surface_h = display_surface.get_height()
 
-    centered_w = ((surface_w - maze_img_w) // 2)
-    centered_h = ((surface_h - maze_img_h) // 2) + GUI_Y_OFFSET
+    maze_centered_width = ((surface_w - maze_img_w) // 2)
+    maze_centered_height = ((surface_h - maze_img_h) // 2) + GUI_Y_OFFSET
 
-    display.blit(maze_img, (centered_w, centered_h))
+    display_surface.blit(maze_surface, (maze_centered_width, maze_centered_height))
 
     # surf = pygame.surfarray.make_surface(graph1.graph * 255)
-    surf = pygame.Surface((1280 + PADDING_X, 720 + GUI_Y_OFFSET + PADDING_Y), pygame.SRCALPHA, 32)
-    surf = surf.convert_alpha()
+    surface = pygame.Surface((1280 + PADDING_X, 720 + GUI_Y_OFFSET + PADDING_Y), pygame.SRCALPHA, 32)
+    surface = surface.convert_alpha()
 
-    display.blit(surf, (0, 0))
+    display_surface.blit(surface, (0, 0))
 
-    start = None
-    end = None
-    once = True
+    start_vertex = None
+    end_vertex = None
+    run_once = True
 
-    return (display, surf, graph, maze_img, centered_w, centered_h, start, end, once)
+    return (display_surface, surface, graph, maze_surface, maze_centered_width, maze_centered_height,
+            start_vertex, end_vertex, run_once)
 
 
 # Initialize variables from the initialize_maze call with the specified maze
 display, surf, graph1, maze_img, \
-centered_w, centered_h, start, end, once = initialize_maze('mazes/maze4.png')
+    centered_w, centered_h, start, end, once = initialize_maze('mazes/maze4.png')
 
-# Initialize the GUI. This includes buttons, timers, and counters.
+# Initialize the GUI. This includes buttons, text boxes, drop down menus, timers, and counters.
 start_button = ToggleButton((10, 10, 100, 50), 'Start', (0, 170, 0))
 end_button = ToggleButton((110, 10, 100, 50), 'End', (170, 0, 0))
 restart_button = Button((620, 10, 100, 50), 'Restart', (255, 0, 0))
@@ -175,10 +176,9 @@ while True:
             alg.a_star(graph1, start, end, surf, display)  # A STAR
         once = False
 
-    # Draw the buttons and redraw the background and maze
+    # Redraw the background and maze, then draw the buttons
     display.fill((255, 255, 255, 0))
     display.blit(maze_img, (centered_w, centered_h))
-
     start_button.draw(display)
     end_button.draw(display)
     restart_button.draw(display)
@@ -255,8 +255,9 @@ while True:
                 display, surf, graph1, maze_img, \
                     centered_w, centered_h, start, end, once = initialize_maze(returned_text)
                 alg.update_off_set_values(centered_w, centered_h)
-            except Exception:
-                print('Path does not exist')
+            except Exception:  # Exception is broad here because Cv2 does not give good error
+                print('Path does not exist')  # messages, however the error is caused by the path
+                                              # location not existing
 
     # Pygame
     display.blit(surf, (0, 0))
