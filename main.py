@@ -13,6 +13,7 @@ from matrix_graph import MatrixGraph
 from algorithms import PathfindingAlgorithms
 from drop_down import DropDown
 from button import Button, ToggleButton
+from text_box import TextBox
 from image_processing import crop_image
 
 # Constants
@@ -139,7 +140,7 @@ def initialize_maze(maze_path: str) -> tuple[pygame.Surface, pygame.Surface, Mat
 
 # Initialize variables from the initialize_maze call with the specified maze
 display, surf, graph1, maze_img, \
-centered_w, centered_h, start, end, once = initialize_maze('maze4.png')
+centered_w, centered_h, start, end, once = initialize_maze('mazes/maze4.png')
 
 # Initialize the GUI. This includes buttons, timers, and counters.
 start_button = ToggleButton((10, 10, 100, 50), 'Start', (0, 170, 0))
@@ -150,6 +151,8 @@ timer_pos = (210, 30)  # 412
 algo_drop_down = DropDown(['Breadth First Search', 'Depth First Search', 'A*'],
                           (420, 10, 200, 50), display)
 maze_drop_down = DropDown(['Maze 1', 'Maze 2', 'Maze 3', 'Other'], (720, 10, 200, 50), display)
+maze_drop_down_text_box = TextBox('', 'Enter Maze Path', (925, 10, 150, 50), display)
+draw_text_box = False
 
 # Initialize the algorithm object
 alg = PathfindingAlgorithms(iteration_counter_pos, centered_w, centered_h, timer_pos)
@@ -181,6 +184,9 @@ while True:
     restart_button.draw(display)
     algo_drop_down.draw_list()
     maze_drop_down.draw_list()
+    if draw_text_box:
+        maze_drop_down_text_box.draw_text_box()
+
 
     # Check pygame events
     events = pygame.event.get()
@@ -221,18 +227,37 @@ while True:
         if maze_drop_down.get_first() == 'Maze 1':
             # Reassign variables with respect to the new maze
             display, surf, graph1, maze_img, \
-            centered_w, centered_h, start, end, once = initialize_maze('maze4.png')
+                centered_w, centered_h, start, end, once = initialize_maze('mazes/maze4.png')
             alg.update_off_set_values(centered_w, centered_h)
+            draw_text_box = False
         elif maze_drop_down.get_first() == 'Maze 2':
             # Reassign variables with respect to the new maze
             display, surf, graph1, maze_img, \
-            centered_w, centered_h, start, end, once = initialize_maze('maze3.jpg')
+                centered_w, centered_h, start, end, once = initialize_maze('mazes/maze3.jpg')
             alg.update_off_set_values(centered_w, centered_h)
+            draw_text_box = False
         elif maze_drop_down.get_first() == 'Maze 3':
             # Reassign variables with respect to the new maze
             display, surf, graph1, maze_img, \
-            centered_w, centered_h, start, end, once = initialize_maze('maze.png')
+                centered_w, centered_h, start, end, once = initialize_maze('mazes/maze.png')
             alg.update_off_set_values(centered_w, centered_h)
+            draw_text_box = False
+        elif maze_drop_down.get_first() == 'Other':
+            # If other is selected, allow the text box to be drawn
+            draw_text_box = True
+
+    # If the textbox is active, update it
+    if draw_text_box:
+        # Update and get the returned text
+        returned_text = maze_drop_down_text_box.update(events)
+        if returned_text != 'IGNORE':
+            try:
+                # If there is a valid input, switch to that maze
+                display, surf, graph1, maze_img, \
+                    centered_w, centered_h, start, end, once = initialize_maze(returned_text)
+                alg.update_off_set_values(centered_w, centered_h)
+            except Exception:
+                print('Path does not exist')
 
     # Pygame
     display.blit(surf, (0, 0))
