@@ -223,7 +223,3 @@ while True:
     display.blit(surf, (0, 0))
     pygame.time.wait(1)
     pygame.display.flip()
-
-# cv2.imshow('w', thinned)
-#
-# cv2.waitKey(0)
