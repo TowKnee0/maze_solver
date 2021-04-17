@@ -38,13 +38,10 @@ class MatrixGraph:
         self.cols, self.rows = matrix.shape
 
     def get_valid_neighbours(self, col: int, row: int) -> list[tuple]:
-        """Not elegant but fast(enough for now)
+        """
         Return a list of pixels that are adjacent to (col, row)
-
         """
         neighbours = []
-        # col = cord[0]
-        # row = cord[1]
 
         if row - 1 >= 0 and self.graph[col, row - 1] == 1:
             neighbours.append((col, row - 1))
