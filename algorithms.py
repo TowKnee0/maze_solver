@@ -222,7 +222,7 @@ class PathfindingAlgorithms:
                 if not any(tup[1][0] == coord for tup in open_queue.queue):
                     # If the neighbor is not in the the open queue, add it
 
-                    # Compute the huristic and add it to open
+                    # Compute the heuristic and add it to open
                     neighbour_f = curr[1][1] + 1 + graph.euclidean_distance(target, coord)
                     open_queue.put((neighbour_f, (coord, curr[1][1] + 1)))
 
