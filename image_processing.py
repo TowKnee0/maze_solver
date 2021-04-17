@@ -20,6 +20,10 @@ def crop_image(image: np.ndarray) -> np.ndarray:
     blurred = cv2.GaussianBlur(image_gray, (3, 3), 0)
 
     # global threshold using Otsu
+    # Note: Although unpacking like this results in one of the variables to be unused and makes
+    # PyTA heavily depressed, this is standard OpenCV notation.
+    # For reference, you may check docs.opencv.org/master/d7/d4d/tutorial_py_thresholding.html
+
     ret1, thresh1 = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
     # invert image color and find contours

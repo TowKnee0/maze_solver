@@ -48,6 +48,9 @@ def initialize_maze(maze_path: str, rectangular: bool = True) -> tuple[
         cropped = image
 
     # Global thresholding using Otsu's binarization
+    # Note: Although unpacking like this results in one of the variables to be unused and makes
+    # PyTA heavily depressed, this is standard OpenCV notation.
+    # For reference, you may check docs.opencv.org/master/d7/d4d/tutorial_py_thresholding.html
     retVal, thresh = cv2.threshold(cv2.cvtColor(cropped, cv2.COLOR_RGB2GRAY), 0, 255,
                                    cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
