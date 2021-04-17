@@ -217,7 +217,7 @@ while True:
                 alg.update_off_set_values(centered_w, centered_h)
             except Exception:  # Exception is broad here because Cv2 does not give good error
                 print('Path does not exist')  # messages, however the error is caused by the path
-                # location not close enough
+                # location not existing
 
     # Pygame
     display.blit(surf, (0, 0))
