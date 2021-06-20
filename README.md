@@ -19,7 +19,7 @@ the first maze loaded.
 The user can then select their desired pathfinding algorithm (by clicking on the drop down menu) and start and
 stop points by clicking the start / stop button, then the point on the maze.
 
-![image](https://user-images.githubusercontent.com/45114241/122686090-6f498980-d1dd-11eb-8c1c-a952d268f573.png
+![image](https://user-images.githubusercontent.com/45114241/122686198-fbf44780-d1dd-11eb-9e17-8d3df867ca40.png)
 
 Once both points are selected (and valid, if they are not, a message warning the user will be printed to the python
 console) then the visualization will start and the path the algorithm traces will be drawn in red. Once the algorithm
