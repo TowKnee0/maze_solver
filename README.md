@@ -41,4 +41,5 @@ The program supports circular / non-rectangular mazes, although the cropping alg
 circular / non-rectangular shapes as mentioned in the computational overview. Therefore, when adding circular /
 non-rectangular mazes into the /mazes folder, please make sure the name of the file begins with ’c ’, for example
 ’c my maze.png’. This prefix tells the program to skip the cropping step.
+
 ![image](https://user-images.githubusercontent.com/45114241/122686140-ba639c80-d1dd-11eb-9125-9ea691805ea9.png)
